@@ -12,6 +12,30 @@ const bouncyAnimation = keyframes`
   100% { top: 0em; }
 `;
 
+// Keyframes for continuous 3D rotation animation
+const rotateAnimation = keyframes`
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
+`;
+
+const PageContainer = styled.div`
+  display: flex;
+  width: 100%;
+  max-width: 1200px;
+  height: 80vh;
+  background: rgba(15, 15, 15, 0.9);
+  color: white;
+  border: 2px solid #00c785;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(14, 167, 233, 0.3);
+  backdrop-filter: blur(10px);
+`;
+
 const PageWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -21,26 +45,17 @@ const PageWrapper = styled.div`
   padding: 20px;
 `;
 
-const PageContainer = styled.div`
-  display: flex;
-  width: 100%;
-  max-width: 1200px;
-  height: 80vh;
-  background: rgba(15, 15, 15, 0.9); /* Dark glass effect */
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.1); /* Lighter border for contrast */
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px); /* Optional: Adds a frosted glass effect */
-`;
-
 const ImageSection = styled.div`
   flex: 1.5;
-  background-image: url('/assets/image.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-image: url('/assets/potential.png'); /* Replace with actual path */
+  background-size: cover;          
+  background-position: center;     
+  background-repeat: no-repeat;    
+  position: relative;              
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;                
 `;
 
 const FormSection = styled.div`
@@ -82,14 +97,14 @@ const Input = styled.input`
 
 const Button = styled.button`
   padding: 12px;
-  background-color: #0078ff;
+  background-color: #00c785; /* Updated color to green */
   color: white;
   border: none;
   border-radius: 4px;
   font-size: 16px;
   cursor: pointer;
   position: relative;
-  animation: ${bouncyAnimation} 5s infinite linear; /* Applying the bouncy animation */
+  animation: ${bouncyAnimation} 5s infinite linear;
 
   &:hover {
     background-color: #0056b3;
@@ -102,7 +117,7 @@ const SignUpLink = styled.p`
   color: #aaa;
 
   a {
-    color: #0078ff;
+    color: #00c785; /* Updated color to green */
     text-decoration: none;
   }
 `;
@@ -120,7 +135,9 @@ const LoginPage = () => {
   return (
     <PageWrapper>
       <PageContainer>
-        <ImageSection />
+        <ImageSection>
+          {/* Option for background image behind MentoreTalk text */}
+        </ImageSection>
         <FormSection>
           <Title>Log in</Title>
           <Subtitle>Welcome back! Log in to access your account.</Subtitle>
@@ -139,7 +156,7 @@ const LoginPage = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <Button type="submit" className="bouncy">Log In</Button>
+            <Button type="submit">Log In</Button>
           </Form>
           <SignUpLink>
             New to our platform? <a href="/signup">Sign up</a>

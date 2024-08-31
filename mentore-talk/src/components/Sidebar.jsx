@@ -84,7 +84,7 @@ const Sidebar = () => {
     <>
       <SidebarContainer isOpen={isOpen}>
         <SidebarHeader>
-          <h2>ProPeers</h2>
+          <h2>MentoreTalk</h2>
           <X onClick={toggleSidebar} style={{ cursor: 'pointer' }} />
         </SidebarHeader>
         <SidebarContent>

@@ -12,6 +12,16 @@ const bouncy = keyframes`
   100% { top: 0em; }
 `;
 
+// 3D rotation animation keyframes
+const rotateAnimation = keyframes`
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
+`;
+
 const PageWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -35,16 +45,46 @@ const PageContainer = styled.div`
   backdrop-filter: blur(10px);
 `;
 
-const ImageSection = styled.div`
-  flex: 1.5;
-  background-image: url('/assets/image.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+const RotatingTextSection = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+`;
+
+const Text3DWrapper = styled.div`
+  perspective: 1000px;
+`;
+
+const Text3D = styled.div`
+  font-size: 4rem;
+  font-weight: bold;
+  color: #0286c7;
+  animation: ${rotateAnimation} 10s infinite linear;
+  transform-style: preserve-3d;
+`;
+
+const Text3DFace = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const FrontFace = styled(Text3DFace)`
+  transform: rotateY(0deg);
+`;
+
+const BackFace = styled(Text3DFace)`
+  transform: rotateY(180deg);
 `;
 
 const FormSection = styled.div`
-  flex: 1;
+  flex: 0.5;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -80,7 +120,21 @@ const Input = styled.input`
   }
 `;
 
-// Updated Button with Bouncy Animation
+const CheckboxContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+`;
+
+const Checkbox = styled.input`
+  margin-right: 10px;
+`;
+
+const CheckboxLabel = styled.label`
+  font-size: 14px;
+  color: #aaa;
+`;
+
 const Button = styled.button`
   padding: 12px;
   background-color: #0078ff;
@@ -89,7 +143,7 @@ const Button = styled.button`
   border-radius: 4px;
   font-size: 16px;
   cursor: pointer;
-  position: relative; /* Required for animation */
+  position: relative;
   animation: ${bouncy} 5s infinite linear;
 
   &:hover {
@@ -97,7 +151,7 @@ const Button = styled.button`
   }
 `;
 
-const SignUpLink = styled.p`
+const SignInLink = styled.p`
   margin-top: 20px;
   text-align: left;
   color: #aaa;
@@ -122,7 +176,14 @@ const SignUpPage = () => {
   return (
     <PageWrapper>
       <PageContainer>
-        <ImageSection />
+        <RotatingTextSection>
+          <Text3DWrapper>
+            <Text3D>
+              <FrontFace>MentoreTalk</FrontFace>
+              <BackFace>Connect to Mentors</BackFace>
+            </Text3D>
+          </Text3DWrapper>
+        </RotatingTextSection>
         <FormSection>
           <Title>Sign up</Title>
           <Subtitle>Welcome to the Smart Site System for Oil Depots. Register as a member to experience.</Subtitle>
@@ -141,12 +202,23 @@ const SignUpPage = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            
+            <CheckboxContainer>
+              <Checkbox
+                type="checkbox"
+                id="agreeToTerms"
+                checked={agreeToTerms}
+                onChange={(e) => setAgreeToTerms(e.target.checked)}
+                required
+              />
+              <CheckboxLabel htmlFor="agreeToTerms">
+                I agree to the Terms and Conditions
+              </CheckboxLabel>
+            </CheckboxContainer>
             <Button type="submit">Create Account</Button>
           </Form>
-          <SignUpLink>
+          <SignInLink>
             Already a member? <a href="/login">Sign in</a>
-          </SignUpLink>
+          </SignInLink>
         </FormSection>
       </PageContainer>
     </PageWrapper>
