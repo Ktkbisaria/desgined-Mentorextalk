@@ -47,15 +47,29 @@ const PageWrapper = styled.div`
 
 const ImageSection = styled.div`
   flex: 1.5;
-  background-image: url('/assets/potential.png'); /* Replace with actual path */
-  background-size: cover;          
-  background-position: center;     
-  background-repeat: no-repeat;    
-  position: relative;              
+  background-image: url('/assets/Login.png'); /* Replace with the actual image path */
+  background-size: cover;         /* Ensures the image covers the entire container */
+  background-position: center;    /* Centers the image */
+  background-repeat: no-repeat;   /* Prevents the image from repeating */
+  position: relative;             /* Allows child elements to be positioned absolutely */
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;                
+  overflow: hidden;               /* Ensures no overflow of image or text */
+  width: 100%;
+  height: 100%;
+`;
+
+// Add a styled component for the overlay text
+const OverlayText = styled.h1`
+  position: absolute;
+  top: 200px;           /* Adjust the top position as needed */
+         /* Adjust the left position as needed */
+  font-size: 3rem;     /* Adjust font size as needed */
+  color: white;        /* Set text color to white */
+  z-index: 1;          /* Ensures the text is on top of the image */
+  font-weight: bold;   /* Makes the text bold */
+  
 `;
 
 const FormSection = styled.div`
@@ -136,6 +150,7 @@ const LoginPage = () => {
     <PageWrapper>
       <PageContainer>
         <ImageSection>
+        <OverlayText>MentoreTalk</OverlayText> {/* Overlay text on top of the image */}
           {/* Option for background image behind MentoreTalk text */}
         </ImageSection>
         <FormSection>
