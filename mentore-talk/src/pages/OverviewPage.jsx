@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 // Define new colors
 const colors = {
-  primary: 'rgba(18, 18, 18, 0.8)',   // Dark gray with opacity
+  primary: '',   // Dark gray with opacity
   secondary: '#00c785', // Bright blue for secondary
   tertiary: '#FFFFFF',  // White for tertiary
 };

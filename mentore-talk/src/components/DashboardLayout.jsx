@@ -1,22 +1,27 @@
-// src/components/DashboardLayout.jsx
 import React from 'react';
 import Sidebar from './Sidebar';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 // Define new colors consistent with OverviewPage
 const colors = {
-  primary: 'rgba(18, 18, 18, 0.8)',   // Dark gray with opacity
+  primary: '#0a0a0a', // Darker background
   secondary: '#00c785', // Bright green for secondary
   tertiary: '#FFFFFF',  // White for tertiary
 };
 
-// Layout Wrapper with Background Image
+// Keyframes for subtle background animation
+const backgroundAnimation = keyframes`
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+`;
+
+// Layout Wrapper with Background Gradient and Animation
 const LayoutWrapper = styled.div`
   display: flex;
-  background-color: rgba(0, 0, 0, 0.5);
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  background: linear-gradient(-45deg, #0a0a0a, #1c1c1c, #2e2e2e, #0a0a0a);
+  background-size: 400% 400%;
+  animation: ${backgroundAnimation} 15s ease infinite;
   min-height: 100vh;
   position: relative;
 
@@ -27,7 +32,7 @@ const LayoutWrapper = styled.div`
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5); // Dark overlay for better text visibility
+    background-color: rgba(0, 0, 0, 0.6); // Dark overlay for better text visibility
     z-index: 1;
   }
 `;
@@ -35,9 +40,7 @@ const LayoutWrapper = styled.div`
 // Main Content Area
 const Content = styled.main`
   flex: 1;
- 
   padding: 2rem;
-   /* Dark semi-transparent overlay */
   color: ${colors.tertiary};
   min-height: 100vh;
   position: relative;
@@ -53,32 +56,35 @@ const Header = styled.header`
   color: ${colors.tertiary};
   padding: 1rem;
   border-bottom: 1px solid ${colors.secondary};
+  background-color: rgba(0, 0, 0, 0.3); /* Transparent background for header */
 `;
 
-// Logo Style
+// Logo Style with Subtle Glow
 const Logo = styled.div`
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   font-weight: bold;
   color: ${colors.secondary};
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 0 10px ${colors.secondary}, 0 0 20px ${colors.secondary};
 `;
 
 // Navigation Style
 const Nav = styled.nav`
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
 `;
 
+// NavLink Style with Hover Effect
 const NavLink = styled.a`
   color: ${colors.tertiary};
   text-decoration: none;
   padding: 0.5rem;
   border-radius: 4px;
-  transition: background-color 0.3s, color 0.3s;
-
+  transition: background-color 0.3s, color 0.3s, transform 0.3s;
+  
   &:hover {
     background-color: ${colors.secondary};
     color: ${colors.primary};
+    transform: scale(1.1);
   }
 `;
 
@@ -90,7 +96,6 @@ const DashboardLayout = ({ children }) => {
         <Header>
           <Logo>MentoreTalk</Logo>
           <Nav>
-            
             <NavLink href="/profile">Profile</NavLink>
             <NavLink href="/settings">Settings</NavLink>
           </Nav>

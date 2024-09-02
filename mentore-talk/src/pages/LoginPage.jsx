@@ -51,6 +51,7 @@ const PageContainer = styled.div`
 const ImageSection = styled.div`
   flex: 1.5;
    /* Updated to use the specified image */
+   
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

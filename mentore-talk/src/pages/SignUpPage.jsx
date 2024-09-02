@@ -28,7 +28,7 @@ const PageWrapper = styled.div`
   align-items: center;
   min-height: 100vh;
   padding: 20px;
-  background-image: url('assets/Overview3.png'); /* Updated with the correct image path */
+  background-image: url('assets/Overview3.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -182,21 +182,47 @@ const SignInLink = styled.p`
   }
 `;
 
+const ToggleButtonGroup = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+`;
+
+const ToggleButton = styled.button`
+  padding: 10px 20px;
+  border: 2px solid #00c785;
+  background-color: ${({ active }) => (active ? '#00c785' : 'transparent')};
+  color: ${({ active }) => (active ? '#fff' : '#00c785')};
+  border-radius: 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  &:first-child {
+    border-right: none;
+  }
+
+  &:hover {
+    background-color: #00c785;
+    color: #fff;
+  }
+`;
+
 const SignupPage = () => {
+  const [role, setRole] = useState('mentor'); // Default role is 'mentor'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [agreeToTerms, setAgreeToTerms] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Email:', email, 'Password:', password, 'Agreed to terms:', agreeToTerms);
+    console.log('Role:', role, 'Email:', email, 'Password:', password, 'Agreed to terms:', agreeToTerms);
     // Handle signup logic here
   };
 
   return (
     <PageWrapper>
       <PageContainer>
-        
         <RotatingTextSection>
           <Text3DWrapper>
             <Text3D>
@@ -208,6 +234,16 @@ const SignupPage = () => {
         <FormSection>
           <Title>Sign up</Title>
           <Subtitle>Welcome to MentoreTalk. Register to connect with mentors.</Subtitle>
+
+          <ToggleButtonGroup>
+            <ToggleButton active={role === 'mentor'} onClick={() => setRole('mentor')}>
+              Sign up as a Mentor
+            </ToggleButton>
+            <ToggleButton active={role === 'student'} onClick={() => setRole('student')}>
+              Sign up as a Student
+            </ToggleButton>
+          </ToggleButtonGroup>
+
           <Form onSubmit={handleSubmit}>
             <Input
               type="email"
