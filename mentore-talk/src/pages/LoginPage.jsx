@@ -22,6 +22,18 @@ const rotateAnimation = keyframes`
   }
 `;
 
+const PageWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  background-image: url('assets/Overview3.png'); /* Updated with the correct image path */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+`;
+
 const PageContainer = styled.div`
   display: flex;
   width: 100%;
@@ -36,40 +48,19 @@ const PageContainer = styled.div`
   backdrop-filter: blur(10px);
 `;
 
-const PageWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background-color: #0a0a0a;
-  padding: 20px;
-`;
-
 const ImageSection = styled.div`
   flex: 1.5;
-  background-image: url('/assets/Login.png'); /* Replace with the actual image path */
-  background-size: cover;         /* Ensures the image covers the entire container */
-  background-position: center;    /* Centers the image */
-  background-repeat: no-repeat;   /* Prevents the image from repeating */
-  position: relative;             /* Allows child elements to be positioned absolutely */
+   /* Updated to use the specified image */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;               /* Ensures no overflow of image or text */
+  overflow: hidden;
   width: 100%;
   height: 100%;
-`;
-
-// Add a styled component for the overlay text
-const OverlayText = styled.h1`
-  position: absolute;
-  top: 200px;           /* Adjust the top position as needed */
-         /* Adjust the left position as needed */
-  font-size: 3rem;     /* Adjust font size as needed */
-  color: white;        /* Set text color to white */
-  z-index: 1;          /* Ensures the text is on top of the image */
-  font-weight: bold;   /* Makes the text bold */
-  
 `;
 
 const FormSection = styled.div`
@@ -136,6 +127,44 @@ const SignUpLink = styled.p`
   }
 `;
 
+const RotatingTextSection = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+`;
+
+const Text3DWrapper = styled.div`
+  perspective: 1000px;
+`;
+
+const Text3D = styled.div`
+  font-size: 4rem;
+  font-weight: bold;
+  color: #00c785;
+  animation: ${rotateAnimation} 10s infinite linear;
+  transform-style: preserve-3d;
+`;
+
+const Text3DFace = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const FrontFace = styled(Text3DFace)`
+  transform: rotateY(0deg);
+`;
+
+const BackFace = styled(Text3DFace)`
+  transform: rotateY(180deg);
+`;
+
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -149,9 +178,15 @@ const LoginPage = () => {
   return (
     <PageWrapper>
       <PageContainer>
-        <ImageSection>
-        <OverlayText>MentoreTalk</OverlayText> {/* Overlay text on top of the image */}
-          {/* Option for background image behind MentoreTalk text */}
+        <ImageSection> 
+          <RotatingTextSection>
+            <Text3DWrapper>
+              <Text3D>
+                <FrontFace>MentoreTalk</FrontFace>
+                <BackFace>Connect to Mentors</BackFace>
+              </Text3D>
+            </Text3DWrapper>
+          </RotatingTextSection>
         </ImageSection>
         <FormSection>
           <Title>Log in</Title>

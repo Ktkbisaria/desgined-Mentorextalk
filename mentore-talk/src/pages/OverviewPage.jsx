@@ -10,7 +10,7 @@ const colors = {
 };
 
 const PageWrapper = styled.div`
-  background-image: url('assets/Overview.png'); // Replace with the actual path to your image
+  background-image: url('assets/Overview3.png'); // Replace with the actual path to your image
   background-size: cover;
   background-position: center;
   background-attachment: fixed;

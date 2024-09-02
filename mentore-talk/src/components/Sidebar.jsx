@@ -1,17 +1,28 @@
+// src/components/Sidebar.jsx
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Menu, X, Users, Book, HelpCircle, Map, Code, Rss } from 'lucide-react';
 
+// Define new colors
+const colors = {
+  primary: 'rgba(18, 18, 18, 0.8)',   // Dark gray with opacity
+  secondary: '#00c785', // Bright blue for secondary
+  tertiary: '#FFFFFF',  // White for tertiary
+};
+
+// Updated styles for the Sidebar
 const SidebarContainer = styled.div`
   position: fixed;
   left: ${({ isOpen }) => (isOpen ? '0' : '-250px')};
   top: 0;
   height: 100vh;
   width: 250px;
-  background-color: #1a1a1a;
+  background-color: ${colors.primary};
   transition: left 0.3s ease-in-out;
   z-index: 1000;
+  backdrop-filter: blur(8px); /* Adds a blur effect for modern look */
+  border-right: 1px solid rgba(255, 255, 255, 0.2); /* Adds a subtle border */
 `;
 
 const SidebarHeader = styled.div`
@@ -19,24 +30,33 @@ const SidebarHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 1rem;
-  background-color: #0078ff;
-  color: white;
+  background-color: ${colors.secondary};
+  color: ${colors.tertiary};
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
 `;
 
 const SidebarContent = styled.nav`
   padding: 1rem;
+  z-index: 2;
+  position: relative;
 `;
 
 const SidebarItem = styled(Link)`
   display: flex;
   align-items: center;
   padding: 0.75rem 1rem;
-  color: white;
+  color: ${colors.tertiary};
   text-decoration: none;
-  transition: background-color 0.2s;
+  transition: background-color 0.3s, transform 0.2s;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 2;
 
   &:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: ${colors.secondary};
+    color: ${colors.primary};
+    transform: translateY(-2px);
   }
 
   svg {
@@ -48,8 +68,8 @@ const ToggleButton = styled.button`
   position: fixed;
   left: ${({ isOpen }) => (isOpen ? '250px' : '10px')};
   top: 10px;
-  background-color: #0078ff;
-  color: white;
+  background-color: ${colors.secondary};
+  color: ${colors.tertiary};
   border: none;
   border-radius: 50%;
   width: 40px;
@@ -60,6 +80,7 @@ const ToggleButton = styled.button`
   cursor: pointer;
   transition: left 0.3s ease-in-out;
   z-index: 1001;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Adds shadow for depth */
 `;
 
 const Overlay = styled.div`
@@ -75,7 +96,6 @@ const Overlay = styled.div`
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
-
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
@@ -84,38 +104,36 @@ const Sidebar = () => {
     <>
       <SidebarContainer isOpen={isOpen}>
         <SidebarHeader>
-          <h2>MentoreTalk</h2>
-          <X onClick={toggleSidebar} style={{ cursor: 'pointer' }} />
+          MentoreTalk
+          {isOpen ? (
+            <X onClick={toggleSidebar} />
+          ) : (
+            <Menu onClick={toggleSidebar} />
+          )}
         </SidebarHeader>
         <SidebarContent>
           <SidebarItem to="/community">
-            <Users size={20} />
-            Community
+            <Users /> Community
           </SidebarItem>
           <SidebarItem to="/mentors">
-            <Book size={20} />
-            Mentors
+            <Book /> Mentors
           </SidebarItem>
           <SidebarItem to="/ask">
-            <HelpCircle size={20} />
-            Ask Anything
+            <HelpCircle /> Ask Anything
           </SidebarItem>
           <SidebarItem to="/roadmaps">
-            <Map size={20} />
-            Roadmaps
+            <Map /> Roadmaps
           </SidebarItem>
           <SidebarItem to="/problems">
-            <Code size={20} />
-            Problems
+            <Code /> Problems
           </SidebarItem>
           <SidebarItem to="/feed">
-            <Rss size={20} />
-            Feed
+            <Rss /> Feed
           </SidebarItem>
         </SidebarContent>
       </SidebarContainer>
       <ToggleButton isOpen={isOpen} onClick={toggleSidebar}>
-        {isOpen ? <X size={24} /> : <Menu size={24} />}
+        {isOpen ? <X /> : <Menu />}
       </ToggleButton>
       <Overlay isOpen={isOpen} onClick={toggleSidebar} />
     </>

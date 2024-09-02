@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 
 // Bouncy animation keyframes
-const bouncy = keyframes`
+const bouncyAnimation = keyframes`
   0% { top: 0em; }
   40% { top: 0em; }
   43% { top: -0.9em; }
@@ -27,8 +27,11 @@ const PageWrapper = styled.div`
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #0a0a0a;
   padding: 20px;
+  background-image: url('assets/Overview3.png'); /* Updated with the correct image path */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 `;
 
 const PageContainer = styled.div`
@@ -38,10 +41,10 @@ const PageContainer = styled.div`
   height: 80vh;
   background: rgba(15, 15, 15, 0.9);
   color: white;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 2px solid #00c785;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 30px rgba(14, 167, 233, 0.3);
   backdrop-filter: blur(10px);
 `;
 
@@ -60,7 +63,7 @@ const Text3DWrapper = styled.div`
 const Text3D = styled.div`
   font-size: 4rem;
   font-weight: bold;
-  color: #0286c7;
+  color: #00c785;
   animation: ${rotateAnimation} 10s infinite linear;
   transform-style: preserve-3d;
 `;
@@ -84,7 +87,7 @@ const BackFace = styled(Text3DFace)`
 `;
 
 const FormSection = styled.div`
-  flex: 0.5;
+  flex: 0.60;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -114,9 +117,16 @@ const Input = styled.input`
   font-size: 14px;
   background-color: rgba(26, 26, 26, 0.8);
   color: white;
+  transition: all 0.3s ease;
 
   &::placeholder {
     color: #888;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 199, 133, 0.5);
+    border-color: #00c785;
   }
 `;
 
@@ -137,17 +147,23 @@ const CheckboxLabel = styled.label`
 
 const Button = styled.button`
   padding: 12px;
-  background-color: #0078ff;
+  background-color: #00c785;
   color: white;
   border: none;
   border-radius: 4px;
   font-size: 16px;
   cursor: pointer;
   position: relative;
-  animation: ${bouncy} 5s infinite linear;
+  animation: ${bouncyAnimation} 5s infinite linear;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 
   &:hover {
     background-color: #0056b3;
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 `;
 
@@ -157,12 +173,16 @@ const SignInLink = styled.p`
   color: #aaa;
 
   a {
-    color: #0078ff;
+    color: #00c785;
     text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 `;
 
-const SignUpPage = () => {
+const SignupPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [agreeToTerms, setAgreeToTerms] = useState(false);
@@ -170,12 +190,13 @@ const SignUpPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Email:', email, 'Password:', password, 'Agreed to terms:', agreeToTerms);
-    // Handle sign up logic here
+    // Handle signup logic here
   };
 
   return (
     <PageWrapper>
       <PageContainer>
+        
         <RotatingTextSection>
           <Text3DWrapper>
             <Text3D>
@@ -186,7 +207,7 @@ const SignUpPage = () => {
         </RotatingTextSection>
         <FormSection>
           <Title>Sign up</Title>
-          <Subtitle>Welcome to the Smart Site System for Oil Depots. Register as a member to experience.</Subtitle>
+          <Subtitle>Welcome to MentoreTalk. Register to connect with mentors.</Subtitle>
           <Form onSubmit={handleSubmit}>
             <Input
               type="email"
@@ -225,4 +246,4 @@ const SignUpPage = () => {
   );
 };
 
-export default SignUpPage;
+export default SignupPage;
