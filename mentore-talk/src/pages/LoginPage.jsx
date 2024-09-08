@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 // Define the keyframes for the bouncy animation
 const bouncyAnimation = keyframes`
@@ -50,8 +51,6 @@ const PageContainer = styled.div`
 
 const ImageSection = styled.div`
   flex: 1.5;
-   /* Updated to use the specified image */
-   
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -167,19 +166,48 @@ const BackFace = styled(Text3DFace)`
 `;
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
+  const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate(); // Hook for navigation
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Email:', email, 'Password:', password);
-    // Handle login logic here
+
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          usernameOrEmail,
+          password
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSuccess(true);
+        localStorage.setItem('token', data.token);
+        // Redirect to dashboard or home page
+        navigate('/feed');
+        console.log('Login successful!', data);
+      } else {
+        console.log('Login failed:', data.message);
+      }
+    } catch (err) {
+      console.log('An error occurred:', err.message);
+    }
   };
+  
 
   return (
     <PageWrapper>
       <PageContainer>
-        <ImageSection> 
+        <ImageSection>
           <RotatingTextSection>
             <Text3DWrapper>
               <Text3D>
@@ -194,10 +222,10 @@ const LoginPage = () => {
           <Subtitle>Welcome back! Log in to access your account.</Subtitle>
           <Form onSubmit={handleSubmit}>
             <Input
-              type="email"
-              placeholder="E-mail"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              placeholder="Username or Email"
+              value={usernameOrEmail}
+              onChange={(e) => setUsernameOrEmail(e.target.value)}
               required
             />
             <Input

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import styled, { keyframes } from 'styled-components';
 
-// Bouncy animation keyframes
+// Animations
 const bouncyAnimation = keyframes`
   0% { top: 0em; }
   40% { top: 0em; }
@@ -12,7 +13,6 @@ const bouncyAnimation = keyframes`
   100% { top: 0em; }
 `;
 
-// 3D rotation animation keyframes
 const rotateAnimation = keyframes`
   0% {
     transform: rotateY(0deg);
@@ -22,6 +22,7 @@ const rotateAnimation = keyframes`
   }
 `;
 
+// Styled Components
 const PageWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -208,16 +209,66 @@ const ToggleButton = styled.button`
   }
 `;
 
+const ErrorMessage = styled.p`
+  color: #ff6b6b;
+  margin-bottom: 10px;
+`;
+
+const SuccessMessage = styled.p`
+  color: #51cf66;
+  margin-bottom: 10px;
+`;
+
 const SignupPage = () => {
-  const [role, setRole] = useState('mentor'); // Default role is 'mentor'
+  const [role, setRole] = useState('mentor');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate(); // Initialize useNavigate
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Role:', role, 'Email:', email, 'Password:', password, 'Agreed to terms:', agreeToTerms);
-    // Handle signup logic here
+    setError('');
+    setSuccess(false);
+
+    if (!agreeToTerms) {
+      setError('You must agree to the Terms and Conditions');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+          role
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSuccess(true);
+        localStorage.setItem('token', data.token);
+        // Redirect to login page after successful signup
+        setTimeout(() => {
+          navigate('/login'); // Redirect to login page
+        }, 2000); // Optional delay before redirect
+      } else {
+        setError(data.message || 'An error occurred during signup');
+      }
+    } catch (err) {
+      setError('An error occurred. Please try again later.');
+    }
   };
 
   return (
@@ -244,7 +295,17 @@ const SignupPage = () => {
             </ToggleButton>
           </ToggleButtonGroup>
 
+          {error && <ErrorMessage>{error}</ErrorMessage>}
+          {success && <SuccessMessage>Signup successful! Redirecting...</SuccessMessage>}
+
           <Form onSubmit={handleSubmit}>
+            <Input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
             <Input
               type="email"
               placeholder="E-mail"

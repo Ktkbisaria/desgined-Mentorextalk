@@ -1,45 +1,90 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const keys = require('../config/keys');
 
-// Register a new user
+const signToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN || '30d'
+  });
+};
+
 exports.signup = async (req, res) => {
-  const { name, email, password } = req.body;
-
   try {
-    const userExists = await User.findOne({ email });
-    if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
+    const { username, email, password, role } = req.body;
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+    if (existingUser) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'User with this email or username already exists'
+      });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, email, password: hashedPassword });
+    // Create new user
+    const newUser = await User.create({
+      username,
+      email,
+      password,
+      role
+    });
 
-    res.status(201).json(user);
-  } catch (error) {
-    res.status(500).json({ message: 'Error signing up user' });
+    // Generate token
+    const token = signToken(newUser._id);
+
+    res.status(201).json({
+      status: 'success',
+      token,
+      data: {
+        user: {
+          id: newUser._id,
+          username: newUser.username,
+          email: newUser.email,
+          role: newUser.role
+        }
+      }
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: err.message
+    });
   }
 };
 
-// Login a user
 exports.login = async (req, res) => {
-  const { email, password } = req.body;
-
   try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: 'Invalid email or password' });
+    const { usernameOrEmail, password } = req.body;
+
+    // Find user by username or email
+    const user = await User.findOne({ $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }] });
+
+    if (!user || !(await user.correctPassword(password))) {
+      return res.status(401).json({
+        status: 'fail',
+        message: 'Incorrect username/email or password'
+      });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid email or password' });
-    }
+    // Generate token
+    const token = signToken(user._id);
 
-    const token = jwt.sign({ id: user._id }, keys.jwtSecret, { expiresIn: '1h' });
-    res.json({ token, user });
-  } catch (error) {
-    res.status(500).json({ message: 'Error logging in user' });
+    res.status(200).json({
+      status: 'success',
+      token,
+      data: {
+        user: {
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          role: user.role
+        }
+      }
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: err.message
+    });
   }
 };
