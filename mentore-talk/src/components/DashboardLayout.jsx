@@ -1,6 +1,8 @@
 import React from 'react';
 import Sidebar from './Sidebar';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
+import { Outlet, Link } from 'react-router-dom';
+
 
 // Define new colors consistent with OverviewPage
 const colors = {
@@ -9,19 +11,10 @@ const colors = {
   tertiary: '#FFFFFF',  // White for tertiary
 };
 
-// Keyframes for subtle background animation
-const backgroundAnimation = keyframes`
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-`;
-
-// Layout Wrapper with Background Gradient and Animation
+// Layout Wrapper with Gradient Background
 const LayoutWrapper = styled.div`
   display: flex;
-  background: linear-gradient(-45deg, #0a0a0a, #1c1c1c, #2e2e2e, #0a0a0a);
-  background-size: 400% 400%;
-  animation: ${backgroundAnimation} 15s ease infinite;
+  background: linear-gradient(135deg, rgba(10, 10, 10, 1), rgba(28, 28, 28, 1)); 
   min-height: 100vh;
   position: relative;
 
@@ -64,7 +57,6 @@ const Logo = styled.div`
   font-size: 1.8rem;
   font-weight: bold;
   color: ${colors.secondary};
-  text-shadow: 0 0 10px ${colors.secondary}, 0 0 20px ${colors.secondary};
 `;
 
 // Navigation Style
@@ -88,7 +80,7 @@ const NavLink = styled.a`
   }
 `;
 
-const DashboardLayout = ({ children }) => {
+const DashboardLayout = () => {
   return (
     <LayoutWrapper>
       <Sidebar />
@@ -96,11 +88,11 @@ const DashboardLayout = ({ children }) => {
         <Header>
           <Logo>MentoreTalk</Logo>
           <Nav>
-            <NavLink href="/profile">Profile</NavLink>
-            <NavLink href="/settings">Settings</NavLink>
+            <NavLink as={Link} to="/profile">Profile</NavLink>
+            <NavLink as={Link} to="/settings">Settings</NavLink>
           </Nav>
         </Header>
-        {children}
+        <Outlet /> {/* This is where the child routes will be rendered */}
       </Content>
     </LayoutWrapper>
   );

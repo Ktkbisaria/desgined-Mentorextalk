@@ -7,7 +7,7 @@ import { Menu, X, Users, Book, HelpCircle, Map, Code, Rss } from 'lucide-react';
 // Define new colors
 const colors = {
   primary: 'rgba(18, 18, 18, 0.8)',   // Dark gray with opacity
-  secondary: '#00c785', // Bright blue for secondary
+  secondary: '#00c785', // Bright green for secondary
   tertiary: '#FFFFFF',  // White for tertiary
 };
 
