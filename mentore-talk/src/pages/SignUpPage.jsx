@@ -259,10 +259,22 @@ const SignupPage = () => {
       if (response.ok) {
         setSuccess(true);
         localStorage.setItem('token', data.token);
+
+        if (role === 'mentor') {
+          // Redirect mentors to the profile completion page after signup
+          setTimeout(() => {
+            navigate('/mentor-profile-completion');
+          }, 2000);
+        } else {
+          // Redirect other users to the feed page
+          setTimeout(() => {
+            navigate('/feed');
+          }, 2000);
+        }
+
+
         // Redirect to login page after successful signup
-        setTimeout(() => {
-          navigate('/login'); // Redirect to login page
-        }, 2000); // Optional delay before redirect
+       // Optional delay before redirect
       } else {
         setError(data.message || 'An error occurred during signup');
       }

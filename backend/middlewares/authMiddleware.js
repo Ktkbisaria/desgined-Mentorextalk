@@ -32,9 +32,11 @@ const protect = async (req, res, next) => {
     req.user = currentUser;
     next();
   } catch (err) {
+    console.error('Error in auth middleware:', err);
     return res.status(401).json({
       status: 'fail',
-      message: 'Invalid token. Please log in again!'
+      message: 'Invalid token. Please log in again!',
+      error: err.message
     });
   }
 };

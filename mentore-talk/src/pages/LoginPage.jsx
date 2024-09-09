@@ -196,10 +196,10 @@ const LoginPage = () => {
         navigate('/feed');
         console.log('Login successful!', data);
       } else {
-        console.log('Login failed:', data.message);
+        console.log('Login failed:', data.message || 'Wrong Password');
       }
     } catch (err) {
-      console.log('An error occurred:', err.message);
+      console.log('Wrong Password', err.message);
     }
   };
   

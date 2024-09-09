@@ -1,15 +1,12 @@
 const express = require('express');
+const router = express.Router();
+const { getProfile, updateProfile } = require('../controllers/userController');
 const protect = require('../middlewares/authMiddleware');
 
-const router = express.Router();
+// Use GET for fetching profile data
+router.get('/profile', protect, getProfile);
 
-router.get('/profile', protect, (req, res) => {
-  res.json({
-    status: 'success',
-    data: {
-      user: req.user
-    }
-  });
-});
+// Use PUT for updating profile data
+router.put('/profile', protect, updateProfile);
 
 module.exports = router;

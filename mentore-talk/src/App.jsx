@@ -6,6 +6,9 @@ import LoginPage from './pages/LoginPage';
 import DashboardLayout from './components/DashboardLayout';
 import Feed from './pages/Feed';
 import MentorsPage from './pages/MentorsPage';
+import Profile from './pages/Profile';
+import MentorProfileCompletionPage from './pages/MentorProfileCompletionPage';
+
 
 // Placeholder components for the different pages
 const CommunityPage = () => <div>Community Page</div>;
@@ -21,6 +24,8 @@ const App = () => {
         <Route path="/" element={<OverviewPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/mentor-profile-completion" element={<MentorProfileCompletionPage />} />
+        
     
   
 
@@ -33,6 +38,7 @@ const App = () => {
           <Route path="/ask" element={<AskPage />} />
           <Route path="/roadmaps" element={<RoadmapsPage />} />
           <Route path="/problems" element={<ProblemsPage />} />
+          <Route path="/Profile" element={<Profile />} />
         </Route>
       </Routes>
     </Router>

@@ -1,14 +1,10 @@
+// errorHandler.js
 const errorHandler = (err, req, res, next) => {
-    console.error(err.stack);
-  
-    const statusCode = err.statusCode || 500;
-    const status = err.status || 'error';
-  
-    res.status(statusCode).json({
-      status: status,
-      message: err.message,
-      stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack,
-    });
-  };
-  
-  module.exports = errorHandler;
+  console.error('Error:', err.message);
+  res.status(500).json({
+    message: 'An unexpected error occurred',
+    error: err.message
+  });
+};
+
+module.exports = errorHandler;

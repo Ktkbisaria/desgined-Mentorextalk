@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
-const protectedRoutes = require('./routes/protectedRoutes');
-const errorHandler = require('./middlewares/errorHandler');
+const userRoutes = require('./routes/userRoutes'); // Added correctly
+const errorHandler = require('./middlewares/errorHandler'); // Ensure this exists
 
 dotenv.config();
 
@@ -21,12 +21,13 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
   .catch((err) => console.log('MongoDB connection error:', err));
 
 // Routes
-app.use('/api/auth', authRoutes);
-app.use('/api', protectedRoutes);
+app.use('/api/auth', authRoutes); // For authentication routes (signup, login)
+app.use('/api/users', userRoutes); // For user-related routes (profile)
 
 // Error handling middleware
-app.use(errorHandler);
+app.use(errorHandler); // Custom error handler to catch and format errors
 
+// Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
