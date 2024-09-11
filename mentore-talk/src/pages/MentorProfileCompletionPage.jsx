@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import axios from 'axios';
 
 // Define colors
 const colors = {
@@ -36,40 +37,6 @@ const ContentWrapper = styled.div`
   z-index: 2;
 `;
 
-const Header = styled.header`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
-  gap: 1rem;
-`;
-
-const Logo = styled.div`
-  color: ${colors.secondary};
-  font-size: 1.5rem;
-  font-weight: bold;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-`;
-
-const Nav = styled.nav`
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-`;
-
-const NavLink = styled(Link)`
-  color: ${colors.tertiary};
-  text-decoration: none;
-  padding: 0.5rem;
-  border-radius: 4px;
-  transition: background-color 0.3s, color 0.3s;
-  &:hover {
-    background-color: ${colors.secondary};
-    color: ${colors.primary};
-  }
-`;
-
 const MainContent = styled.main`
   display: flex;
   flex-direction: column;
@@ -94,6 +61,21 @@ const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+`;
+
+const Select = styled.select`
+  padding: 0.75rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.1);
+  color: ${colors.tertiary};
+  font-size: 1rem;
+  transition: background-color 0.3s;
+
+  &:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.2);
+  }
 `;
 
 const Input = styled.input`
@@ -166,101 +148,111 @@ const SuccessMessage = styled.p`
 `;
 
 const MentorProfileCompletionPage = () => {
-  const [education, setEducation] = useState('');
-  const [achievement, setAchievement] = useState('');
-  const [skill, setSkill] = useState('');
-  const [bio, setBio] = useState('');
+  const [formData, setFormData] = useState({
+    education: '',
+    experience: '',
+    skills: '',
+    bio: ''
+  });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
   const navigate = useNavigate();
 
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess(false);
-
-    if (!education || !achievement || !skill || !bio) {
+  
+    if (!formData.education || !formData.experience || !formData.skills || !formData.bio) {
       setError('All fields are mandatory.');
       return;
     }
-
+  
     try {
-      const response = await fetch('http://localhost:5000/api/mentor/profile', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify({
-          education,
-          achievement,
-          skill,
-          bio,
-        }),
-      });
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No token found');
+      }
 
-      if (response.ok) {
+      const response = await axios.put('http://localhost:5000/api/users/profile', 
+        {
+          ...formData,
+          skills: formData.skills.split(',').map(skill => skill.trim())
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
+  
+      if (response.status === 200) {
         setSuccess(true);
         setTimeout(() => {
-          navigate('/feed');
+          navigate('/profile');
         }, 2000);
       } else {
-        const data = await response.json();
-        setError(data.message || 'An error occurred while saving your profile.');
+        throw new Error('Profile update failed');
       }
     } catch (err) {
-      setError('An error occurred. Please try again later.');
+      console.error('Submit error:', err);
+      setError(err.response?.data?.message || 'An error occurred. Please try again later.');
     }
   };
-
+  
   return (
     <PageWrapper>
       <ContentWrapper>
-        <Header>
-          <Logo>MentoreTalk</Logo>
-          <Nav>
-            <NavLink to="/feed">Feed</NavLink>
-            <NavLink to="/mentorship">Mentorship</NavLink>
-            <NavLink to="/roadmaps">Roadmaps</NavLink>
-            <NavLink to="/why-mentoretalk">Why MentoreTalk</NavLink>
-            <NavLink to="/how-it-works">How it Works</NavLink>
-          </Nav>
-        </Header>
         <MainContent>
           <Title>Complete Your Mentor Profile</Title>
           {error && <ErrorMessage>{error}</ErrorMessage>}
           {success && <SuccessMessage>Profile completed! Redirecting...</SuccessMessage>}
           <Form onSubmit={handleSubmit}>
-            <Input
-              type="text"
-              placeholder="Educational Background"
-              value={education}
-              onChange={(e) => setEducation(e.target.value)}
+            <Select
+              name="education"
+              value={formData.education}
+              onChange={handleChange}
               required
-            />
-            <Input
-              type="text"
-              placeholder="Achievement or Experience"
-              value={achievement}
-              onChange={(e) => setAchievement(e.target.value)}
+            >
+              <option value="" disabled>Select your education</option>
+              <option value="Bachelor's Degree">Bachelor's Degree</option>
+              <option value="Master's Degree">Master's Degree</option>
+              <option value="PhD">PhD</option>
+              <option value="Other">Other</option>
+            </Select>
+            <Select
+              name="experience"
+              value={formData.experience}
+              onChange={handleChange}
               required
-            />
+            >
+              <option value="" disabled>Select your experience</option>
+              <option value="Less than 1 year">Less than 1 year</option>
+              <option value="1-3 years">1-3 years</option>
+              <option value="3-5 years">3-5 years</option>
+              <option value="More than 5 years">More than 5 years</option>
+            </Select>
             <Input
-              type="text"
-              placeholder="Skill"
-              value={skill}
-              onChange={(e) => setSkill(e.target.value)}
+              name="skills"
+              value={formData.skills}
+              onChange={handleChange}
+              placeholder="Enter your skills (comma-separated)"
               required
             />
             <TextArea
-              placeholder="Bio"
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
-              rows="4"
+              name="bio"
+              value={formData.bio}
+              onChange={handleChange}
+              placeholder="Write a brief bio about yourself..."
               required
             />
-            <Button type="submit">Complete Profile</Button>
+            <Button type="submit">Submit</Button>
           </Form>
         </MainContent>
       </ContentWrapper>

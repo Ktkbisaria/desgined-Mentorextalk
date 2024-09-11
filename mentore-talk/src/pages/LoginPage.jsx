@@ -1,8 +1,9 @@
+// Import necessary libraries
 import React, { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 
-// Define the keyframes for the bouncy animation
+// Define keyframes for animations
 const bouncyAnimation = keyframes`
   0% { top: 0em; }
   40% { top: 0em; }
@@ -13,23 +14,19 @@ const bouncyAnimation = keyframes`
   100% { top: 0em; }
 `;
 
-// Keyframes for continuous 3D rotation animation
 const rotateAnimation = keyframes`
-  0% {
-    transform: rotateY(0deg);
-  }
-  100% {
-    transform: rotateY(360deg);
-  }
+  0% { transform: rotateY(0deg); }
+  100% { transform: rotateY(360deg); }
 `;
 
+// Define styled components
 const PageWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   padding: 20px;
-  background-image: url('assets/Overview3.png'); /* Updated with the correct image path */
+  background-image: url('assets/Overview3.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -102,7 +99,7 @@ const Input = styled.input`
 
 const Button = styled.button`
   padding: 12px;
-  background-color: #00c785; /* Updated color to green */
+  background-color: #00c785;
   color: white;
   border: none;
   border-radius: 4px;
@@ -122,7 +119,7 @@ const SignUpLink = styled.p`
   color: #aaa;
 
   a {
-    color: #00c785; /* Updated color to green */
+    color: #00c785;
     text-decoration: none;
   }
 `;
@@ -165,15 +162,17 @@ const BackFace = styled(Text3DFace)`
   transform: rotateY(180deg);
 `;
 
+// Define the LoginPage component
 const LoginPage = () => {
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
 
     try {
       const response = await fetch('http://localhost:5000/api/auth/login', {
@@ -181,28 +180,23 @@ const LoginPage = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          usernameOrEmail,
-          password
-        }),
+        body: JSON.stringify({ usernameOrEmail, password }),
       });
 
       const data = await response.json();
+      console.log('Login response:', data);
 
       if (response.ok) {
         setSuccess(true);
         localStorage.setItem('token', data.token);
-        // Redirect to dashboard or home page
         navigate('/feed');
-        console.log('Login successful!', data);
       } else {
-        console.log('Login failed:', data.message || 'Wrong Password');
+        setError(data.message || 'Login failed. Please check your credentials.');
       }
     } catch (err) {
-      console.log('Wrong Password', err.message);
+      setError('An error occurred. Please try again later.');
     }
   };
-  
 
   return (
     <PageWrapper>
@@ -236,6 +230,7 @@ const LoginPage = () => {
               required
             />
             <Button type="submit">Log In</Button>
+            {error && <p style={{ color: '#ff6b6b', marginTop: '10px' }}>{error}</p>}
           </Form>
           <SignUpLink>
             New to our platform? <a href="/signup">Sign up</a>

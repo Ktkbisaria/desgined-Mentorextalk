@@ -25,6 +25,7 @@ const App = () => {
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/mentor-profile-completion" element={<MentorProfileCompletionPage />} />
+        <Route path="/Profile" element={<Profile />} />
         
     
   
@@ -38,7 +39,7 @@ const App = () => {
           <Route path="/ask" element={<AskPage />} />
           <Route path="/roadmaps" element={<RoadmapsPage />} />
           <Route path="/problems" element={<ProblemsPage />} />
-          <Route path="/Profile" element={<Profile />} />
+          
         </Route>
       </Routes>
     </Router>
