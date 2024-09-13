@@ -8,6 +8,7 @@ import Feed from './pages/Feed';
 import MentorsPage from './pages/MentorsPage';
 import Profile from './pages/Profile';
 import MentorProfileCompletionPage from './pages/MentorProfileCompletionPage';
+import CreatePost from './pages/CreatePost';
 
 
 // Placeholder components for the different pages
@@ -26,6 +27,7 @@ const App = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/mentor-profile-completion" element={<MentorProfileCompletionPage />} />
         <Route path="/Profile" element={<Profile />} />
+        <Route path="/create-post" element={<CreatePost />} />
         
     
   

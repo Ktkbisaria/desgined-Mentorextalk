@@ -1,122 +1,207 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
-import { ThumbsUp, MessageSquare } from 'lucide-react';  // Correct icons from lucide-react
+import { io } from 'socket.io-client';
+
 
 const colors = {
-    primary: '#1c1e21',
-    secondary: '#00c785',
-    tertiary: '#FFFFFF',
-    background: '#2c2f33',
-  };
+  primary: '#121212', // Darker background
+  secondary: '#00e676', // Bright accent color
+  tertiary: '#f5f5f5', // Light text color
+};
 
 const FeedWrapper = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem;
+  color: ${colors.tertiary};
+  background-color: ${colors.primary};
+  min-height: 100vh;
 `;
 
-const FeedItem = styled.div`
-  background-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  padding: 2rem;
-  border-radius: 12px;
-  margin-bottom: 2rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
+const PostCard = styled.div`
+  background-color: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); // Add subtle shadow for depth
+`;
 
+const SubmitButton = styled.button`
+  background-color: ${colors.secondary};
+  color: ${colors.primary};
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: #00d065; // Slightly darker on hover
   }
 `;
 
-const FeedItemHeader = styled.div`
+const FeedHeader = styled.h1`
+  font-size: 2.5rem;
+  color: ${colors.secondary};
+  margin-bottom: 2rem;
+`;
+
+const PostForm = styled.form`
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 2rem;
+`;
+
+const TextArea = styled.textarea`
+  width: 100%;
+  height: 100px;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid ${colors.secondary};
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: ${colors.tertiary};
+  resize: vertical;
+`;
+
+const FileInput = styled.input`
+  margin-bottom: 1rem;
+`;
+
+const PostList = styled.div`
+  width: 100%;
+  max-width: 600px;
+`;
+
+const PostHeader = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 `;
 
-const FeedItemTitle = styled.h3`
-  font-size: 1.4rem;
+const PostAuthor = styled.span`
+  font-weight: bold;
   color: ${colors.secondary};
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 `;
 
-const FeedItemMeta = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+const PostRole = styled.span`
   color: ${colors.tertiary};
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  opacity: 0.7;
 `;
 
-const FeedItemLikes = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-`;
-
-const FeedItemComments = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-`;
-
-const FeedItemDescription = styled.p`
-  font-size: 1rem;
-  color: ${colors.tertiary};
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+const PostContent = styled.p`
   margin-bottom: 1rem;
+`;
+
+const PostImage = styled.img`
+  width: 100%;
+  height: auto; /* Maintain aspect ratio */
+  object-fit: cover; /* Ensures the image fully covers the width */
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  max-width: 100%;
+  display: block;
 `;
 
 const Feed = () => {
-  const [feedItems, setFeedItems] = useState([
-    {
-      id: 1,
-      title: 'Project of the Day: Build a Todo App',
-      description: 'Learn how to build a Todo app using React and localStorage.',
-      likes: 42,
-      comments: 15,
-    },
-    {
-      id: 2,
-      title: 'Most Liked Post: React Hooks Cheatsheet',
-      description: 'A comprehensive cheatsheet for the most commonly used React hooks.',
-      likes: 128,
-      comments: 32,
-    },
-    {
-      id: 3,
-      title: 'New Roadmap: Become a Full-Stack Developer',
-      description: 'Follow our step-by-step roadmap to become a proficient full-stack developer.',
-      likes: 79,
-      comments: 22,
-    },
-  ]);
+  const [posts, setPosts] = useState([]);
+  const [content, setContent] = useState('');
+  const [image, setImage] = useState(null);
+
+  const fetchPosts = useCallback(async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/feed');
+      setPosts(response.data);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    const socket = io('http://localhost:5000', {
+      transports: ['websocket'],
+      upgrade: false
+    });
+  
+    socket.on('connect', () => {
+      console.log('Connected to server');
+    });
+  
+    socket.on('disconnect', () => {
+      console.log('Disconnected from server');
+    });
+  
+    socket.on('connect_error', (error) => {
+      console.error('Connection error:', error);
+    });
+  
+    // Listen for new posts
+    socket.on('newPost', (post) => {
+      console.log('New post received:', post);
+      setPosts(prevPosts => [post, ...prevPosts]); // Add new post to the state
+    });
+  
+    return () => {
+      socket.disconnect(); // Clean up the connection on unmount
+    };
+  }, []);
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append('content', content);
+    if (image) {
+      formData.append('image', image);
+    }
+  
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post('http://localhost:5000/api/feed', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setContent('');
+      setImage(null);
+      fetchPosts();  // Refetch the posts after submission
+    } catch (error) {
+      console.error('Error creating post:', error.response ? error.response.data : error.message);
+    }
+  };
+  
 
   return (
     <FeedWrapper>
-      {feedItems.map((item) => (
-        <FeedItem key={item.id}>
-          <FeedItemHeader>
-            <FeedItemTitle>{item.title}</FeedItemTitle>
-            <FeedItemMeta>
-              <FeedItemLikes>
-                <ThumbsUp size={16} />
-                {item.likes}
-              </FeedItemLikes>
-              <FeedItemComments>
-                <MessageSquare size={16} />
-                {item.comments}
-              </FeedItemComments>
-            </FeedItemMeta>
-          </FeedItemHeader>
-          <FeedItemDescription>{item.description}</FeedItemDescription>
-        </FeedItem>
-      ))}
+      <FeedHeader>Feed</FeedHeader>
+      <PostForm onSubmit={handleSubmit}>
+        <TextArea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="What's on your mind?"
+          required
+        />
+        <FileInput
+          type="file"
+          onChange={(e) => setImage(e.target.files[0])}
+          accept="image/*"
+        />
+        <SubmitButton type="submit">Post</SubmitButton>
+      </PostForm>
+      <PostList>
+        {posts.map((post) => (
+          <PostCard key={post._id}>
+            <PostHeader>
+              <PostAuthor>{post.author.username}</PostAuthor>
+              <PostRole>{post.author.role}</PostRole>
+            </PostHeader>
+            <PostContent>{post.content}</PostContent>
+            {post.image && <PostImage src={post.image} alt="Post image" />}
+          </PostCard>
+        ))}
+      </PostList>
     </FeedWrapper>
   );
 };
