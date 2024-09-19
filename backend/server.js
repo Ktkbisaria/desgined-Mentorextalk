@@ -8,6 +8,7 @@ const feedRoutes = require('./routes/feedRoutes'); // Added correctly
 const errorHandler = require('./middlewares/errorHandler'); // Ensure this exists
 const path = require('path');
 const http = require('http'); // Import the HTTP module
+const mentorRoutes =require('./routes/mentorRoutes')
 const socketIo = require('socket.io'); // Import socket.io
 
 dotenv.config();
@@ -46,6 +47,7 @@ mongoose.connect(process.env.MONGO_URI, {
 app.use('/api/auth', authRoutes); // For authentication routes (signup, login)
 app.use('/api/users', userRoutes); // For user-related routes (profile)
 app.use('/api/feed', feedRoutes(io)); // Pass io instance to feed routes
+app.use('/api/mentors', mentorRoutes);
 
 // Handle WebSocket connections
 io.on('connection', (socket) => {

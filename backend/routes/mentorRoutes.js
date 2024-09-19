@@ -1,8 +1,10 @@
+// routes/mentorRoutes.js
 const express = require('express');
-const { getMentors, addMentor } = require('../controllers/mentorController');
+const { getMentors } = require('../controllers/mentorController');
+
 const router = express.Router();
 
+// Route to fetch mentors based on search and filters
 router.get('/', getMentors);
-router.post('/', addMentor);
 
 module.exports = router;

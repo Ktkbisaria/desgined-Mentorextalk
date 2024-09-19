@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 
-// Define color palette
 const colors = {
   primary: '#1c1e21',
   secondary: '#00c785',
@@ -9,7 +9,6 @@ const colors = {
   background: '#2c2f33',
 };
 
-// Styled components for the Mentor Page
 const PageWrapper = styled.div`
   background-color: ${colors.primary};
   color: ${colors.tertiary};
@@ -78,47 +77,150 @@ const MentorName = styled.h3`
 `;
 
 const MentorsPage = () => {
+  const [mentors, setMentors] = useState([]);
+  const [search, setSearch] = useState('');
+  const [selectedCompanies, setSelectedCompanies] = useState([]);
+  const [selectedSkills, setSelectedSkills] = useState([]);
+  const [selectedDomains, setSelectedDomains] = useState([]);
+
+  const fetchMentors = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/api/mentors', {
+        params: {
+          search,
+          companies: selectedCompanies.join(','),
+          skills: selectedSkills.join(','),
+          domains: selectedDomains.join(','),
+        },
+      });
+      setMentors(response.data);
+    } catch (err) {
+      console.error('Error fetching mentors:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchMentors();
+  }, [search, selectedCompanies, selectedSkills, selectedDomains]);
+
+  const handleCheckboxChange = (e, setFilter) => {
+    const { name, checked } = e.target;
+    setFilter((prev) =>
+      checked ? [...prev, name] : prev.filter((item) => item !== name)
+    );
+  };
+
   return (
     <PageWrapper>
       <Header>
-        <SearchBar type="text" placeholder="Search here..." />
-        <button>Filter</button>
+        <SearchBar
+          type="text"
+          placeholder="Search here..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
       </Header>
-      
+
       <FilterWrapper>
         <FilterBox>
           <FilterTitle>Companies</FilterTitle>
-          <div><Checkbox type="checkbox" /> Google</div>
-          <div><Checkbox type="checkbox" /> Microsoft</div>
-          <div><Checkbox type="checkbox" /> Amazon</div>
+          <div>
+            <Checkbox
+              type="checkbox"
+              name="Google"
+              onChange={(e) => handleCheckboxChange(e, setSelectedCompanies)}
+            />
+            Google
+          </div>
+          <div>
+            <Checkbox
+              type="checkbox"
+              name="Microsoft"
+              onChange={(e) => handleCheckboxChange(e, setSelectedCompanies)}
+            />
+            Microsoft
+          </div>
+          <div>
+            <Checkbox
+              type="checkbox"
+              name="Amazon"
+              onChange={(e) => handleCheckboxChange(e, setSelectedCompanies)}
+            />
+            Amazon
+          </div>
         </FilterBox>
 
         <FilterBox>
           <FilterTitle>Skills</FilterTitle>
-          <div><Checkbox type="checkbox" /> React</div>
-          <div><Checkbox type="checkbox" /> C++</div>
-          <div><Checkbox type="checkbox" /> Python</div>
+          <div>
+            <Checkbox
+              type="checkbox"
+              name="React"
+              onChange={(e) => handleCheckboxChange(e, setSelectedSkills)}
+            />
+            React
+          </div>
+          <div>
+            <Checkbox
+              type="checkbox"
+              name="C++"
+              onChange={(e) => handleCheckboxChange(e, setSelectedSkills)}
+            />
+            C++
+          </div>
+          <div>
+            <Checkbox
+              type="checkbox"
+              name="Python"
+              onChange={(e) => handleCheckboxChange(e, setSelectedSkills)}
+            />
+            Python
+          </div>
         </FilterBox>
 
         <FilterBox>
           <FilterTitle>Domains</FilterTitle>
-          <div><Checkbox type="checkbox" /> Web Development</div>
-          <div><Checkbox type="checkbox" /> Cloud Computing</div>
-          <div><Checkbox type="checkbox" /> App Development</div>
+          <div>
+            <Checkbox
+              type="checkbox"
+              name="Web Development"
+              onChange={(e) => handleCheckboxChange(e, setSelectedDomains)}
+            />
+            Web Development
+          </div>
+          <div>
+            <Checkbox
+              type="checkbox"
+              name="Cloud Computing"
+              onChange={(e) => handleCheckboxChange(e, setSelectedDomains)}
+            />
+            Cloud Computing
+          </div>
+          <div>
+            <Checkbox
+              type="checkbox"
+              name="App Development"
+              onChange={(e) => handleCheckboxChange(e, setSelectedDomains)}
+            />
+            App Development
+          </div>
         </FilterBox>
       </FilterWrapper>
 
       <MentorSuggestions>
-        <h2>Here are a few Mentor suggestions that you might like!</h2>
-        <MentorCard>
-          <MentorName>John Doe</MentorName>
-          <p>Expert in Web Development, React, and JavaScript.</p>
-        </MentorCard>
-        <MentorCard>
-          <MentorName>Jane Smith</MentorName>
-          <p>Specialist in Cloud Computing and Python.</p>
-        </MentorCard>
-        {/* Add more MentorCard components as needed */}
+        {mentors.length > 0 ? (
+          mentors.map((mentor) => (
+            <MentorCard key={mentor._id}>
+              <MentorName>{mentor.name}</MentorName>
+              <p>{mentor.bio}</p>
+              <p>Skills: {mentor.skills.join(', ')}</p>
+              <p>Company: {mentor.company}</p>
+              <p>Domains: {mentor.domains.join(', ')}</p>
+            </MentorCard>
+          ))
+        ) : (
+          <p>No mentors found</p>
+        )}
       </MentorSuggestions>
     </PageWrapper>
   );

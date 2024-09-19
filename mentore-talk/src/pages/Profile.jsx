@@ -11,7 +11,6 @@ const colors = {
 
 // Styled components
 const ProfileWrapper = styled.div`
- 
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -74,6 +73,17 @@ const Bio = styled.p`
   margin-bottom: 1.5rem;
 `;
 
+const FollowerCount = styled.p`
+  font-size: 1rem;
+  color: ${colors.secondary};
+`;
+
+const Ratings = styled.p`
+  font-size: 1rem;
+  color: ${colors.secondary};
+  margin-top: -0.5rem;
+`;
+
 const ProfileActions = styled.div`
   display: flex;
   gap: 1rem;
@@ -100,12 +110,36 @@ const ActionButton = styled.button`
   }
 `;
 
+const Tabs = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  gap: 1rem;
+`;
+
+const Tab = styled.button`
+  background-color: ${colors.primary};
+  color: ${colors.tertiary};
+  padding: 0.75rem 1.5rem;
+  border: 2px solid ${colors.secondary};
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: ${colors.secondary};
+    color: ${colors.primary};
+  }
+`;
+
 const ProfileContent = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
   width: 100%;
   max-width: 800px;
+  margin-top: 2rem;
 `;
 
 const SectionCard = styled.div`
@@ -120,20 +154,7 @@ const SectionCard = styled.div`
     box-shadow: 0 6px 8px rgba(0, 199, 133, 0.2);
   }
 `;
-
-const SectionHeader = styled.h3`
-  font-size: 1.5rem;
-  color: ${colors.secondary};
-  margin-bottom: 1rem;
-  border-bottom: 2px solid ${colors.secondary};
-  padding-bottom: 0.5rem;
-`;
-
-const UserActivity = styled.div`
-  color: ${colors.tertiary};
-  font-size: 1.1rem;
-`;
-
+// Define styled components for Input and TextArea at the top of the file
 const Input = styled.input`
   background-color: rgba(255, 255, 255, 0.1);
   color: ${colors.tertiary};
@@ -169,51 +190,19 @@ const TextArea = styled.textarea`
     box-shadow: 0 0 0 2px ${colors.secondary};
   }
 `;
-const TimelineContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`;
 
-const TimelineEntry = styled.div`
-  background-color: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  padding: 1rem;
-  position: relative;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    left: -20px;
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background-color: ${colors.secondary};
-  }
-`;
 
-const TimelineDate = styled.div`
-  font-size: 0.9rem;
+const SectionHeader = styled.h3`
+  font-size: 1.5rem;
   color: ${colors.secondary};
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid ${colors.secondary};
+  padding-bottom: 0.5rem;
 `;
 
-const TimelineTitle = styled.h4`
-  font-size: 1.2rem;
+const UserActivity = styled.div`
   color: ${colors.tertiary};
-  margin: 0 0 0.5rem 0;
-`;
-
-const TimelineSubtitle = styled.h5`
-  font-size: 1rem;
-  color: ${colors.secondary};
-  margin: 0 0 0.5rem 0;
-`;
-
-const TimelineDescription = styled.p`
-  font-size: 0.9rem;
-  color: ${colors.tertiary};
-  margin: 0;
+  font-size: 1.1rem;
 `;
 
 const Profile = () => {
@@ -221,6 +210,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [activeTab, setActiveTab] = useState('Posts');
   const [editedData, setEditedData] = useState({});
 
   useEffect(() => {
@@ -257,10 +247,6 @@ const Profile = () => {
       skills: userData.skills ? userData.skills.join(', ') : '',
     });
   };
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
 
   const handleSave = async () => {
     try {
@@ -277,7 +263,7 @@ const Profile = () => {
           Authorization: `Bearer ${token}`
         }
       });
-      setUserData({...userData, ...updatedData});
+      setUserData({ ...userData, ...updatedData });
       setIsEditing(false);
     } catch (err) {
       console.error('Error saving profile:', err);
@@ -290,6 +276,10 @@ const Profile = () => {
       ...editedData,
       [e.target.name]: e.target.value
     });
+  };
+
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
   };
 
   if (loading) return <ProfileWrapper>Loading...</ProfileWrapper>;
@@ -321,6 +311,8 @@ const Profile = () => {
           ) : (
             <Bio>{userData.bio || "No bio available"}</Bio>
           )}
+          <FollowerCount>{userData.followers?.length || 0} Followers</FollowerCount>
+          <Ratings>{userData.ratings || "No ratings yet"}</Ratings>
         </ProfileInfo>
         <ProfileActions>
           {isEditing ? (
@@ -328,68 +320,85 @@ const Profile = () => {
           ) : (
             <ActionButton onClick={handleEdit}>Edit Profile</ActionButton>
           )}
+          <ActionButton>Follow</ActionButton>
         </ProfileActions>
       </ProfileHeader>
-    
+
+      <Tabs>
+        <Tab onClick={() => handleTabClick('Experiences')}>Experiences</Tab>
+        <Tab onClick={() => handleTabClick('Education')}>Education</Tab>
+        <Tab onClick={() => handleTabClick('Achievements')}>Achievements</Tab>
+        <Tab onClick={() => handleTabClick('Reviews')}>Reviews</Tab>
+        <Tab onClick={() => handleTabClick('Posts')}>Posts</Tab>
+      </Tabs>
 
       <ProfileContent>
-        <SectionCard>
-          <SectionHeader>Education</SectionHeader>
-          <UserActivity>
-            {isEditing ? (
-              <Input
-                name="education"
-                value={editedData.education}
-                onChange={handleChange}
-                placeholder="Your education..."
-              />
-            ) : (
-              userData.education || "Education not specified"
-            )}
-          </UserActivity>
-        </SectionCard>
-
-        <SectionCard>
-          <SectionHeader>Experience</SectionHeader>
-          <UserActivity>
-            {isEditing ? (
-              <Input
-                name="experience"
-                value={editedData.experience}
-                onChange={handleChange}
-                placeholder="Your experience..."
-              />
-            ) : (
-              userData.experience || "Experience not specified"
-            )}
-          </UserActivity>
-        </SectionCard>
-
-        <SectionCard>
-          <SectionHeader>Skills</SectionHeader>
-          <UserActivity>
-            {isEditing ? (
-              <Input
-                name="skills"
-                value={editedData.skills}
-                onChange={handleChange}
-                placeholder="Your skills (comma-separated)..."
-              />
-            ) : (
-              userData.skills?.join(', ') || "No skills specified"
-            )}
-          </UserActivity>
-        </SectionCard>
-
-        {userData.role === 'mentor' && (
+        {activeTab === 'Experiences' && (
           <SectionCard>
-            <SectionHeader>Mentor Sessions</SectionHeader>
+            <SectionHeader>Experience</SectionHeader>
             <UserActivity>
-              {userData.mentorSessions && userData.mentorSessions.length > 0
-                ? userData.mentorSessions.map((session, index) => (
-                    <div key={index}>{session.title} - {session.date}</div>
-                  ))
-                : "No upcoming mentor sessions"}
+              {isEditing ? (
+                <Input
+                  name="experience"
+                  value={editedData.experience}
+                  onChange={handleChange}
+                  placeholder="Your experience..."
+                />
+              ) : (
+                userData.experience || "Experience not specified"
+              )}
+            </UserActivity>
+          </SectionCard>
+        )}
+
+        {activeTab === 'Education' && (
+          <SectionCard>
+            <SectionHeader>Education</SectionHeader>
+            <UserActivity>
+              {isEditing ? (
+                <Input
+                  name="education"
+                  value={editedData.education}
+                  onChange={handleChange}
+                  placeholder="Your education..."
+                />
+              ) : (
+                userData.education || "Education not specified"
+              )}
+            </UserActivity>
+          </SectionCard>
+        )}
+
+        {activeTab === 'Achievements' && (
+          <SectionCard>
+            <SectionHeader>Achievements</SectionHeader>
+            <UserActivity>
+              {/* Render achievements */}
+              {userData.achievements || "No achievements yet"}
+            </UserActivity>
+          </SectionCard>
+        )}
+
+        {activeTab === 'Reviews' && (
+          <SectionCard>
+            <SectionHeader>Reviews</SectionHeader>
+            <UserActivity>
+              {/* Render reviews */}
+              {userData.reviews?.length > 0
+                ? userData.reviews.map((review, index) => <div key={index}>{review}</div>)
+                : "No reviews yet"}
+            </UserActivity>
+          </SectionCard>
+        )}
+
+        {activeTab === 'Posts' && (
+          <SectionCard>
+            <SectionHeader>Posts</SectionHeader>
+            <UserActivity>
+              {/* Render posts */}
+              {userData.posts?.length > 0
+                ? userData.posts.map((post, index) => <div key={index}>{post}</div>)
+                : "No posts yet"}
             </UserActivity>
           </SectionCard>
         )}

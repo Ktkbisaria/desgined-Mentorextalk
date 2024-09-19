@@ -1,24 +1,42 @@
+// controllers/mentorController.js
 const Mentor = require('../models/Mentor');
 
-// Get all mentors
-exports.getMentors = async (req, res) => {
+// Get mentors based on filters
+const getMentors = async (req, res) => {
   try {
-    const mentors = await Mentor.find();
+    const { search, companies, skills, domains } = req.query;
+    let query = {};
+
+    // Text search for name or bio
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: 'i' } },  // Case-insensitive
+        { bio: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    // Filter by selected companies
+    if (companies) {
+      query.company = { $in: companies.split(',') };
+    }
+
+    // Filter by selected skills
+    if (skills) {
+      query.skills = { $in: skills.split(',') };
+    }
+
+    // Filter by selected domains
+    if (domains) {
+      query.domains = { $in: domains.split(',') };
+    }
+
+    const mentors = await Mentor.find(query);
     res.json(mentors);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching mentors' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server Error', error: err.message });
   }
 };
 
-// Add a new mentor
-exports.addMentor = async (req, res) => {
-  const { name, expertise, bio } = req.body;
-
-  try {
-    const newMentor = new Mentor({ name, expertise, bio });
-    await newMentor.save();
-    res.status(201).json(newMentor);
-  } catch (error) {
-    res.status(500).json({ message: 'Error adding mentor' });
-  }
+module.exports = {
+  getMentors
 };

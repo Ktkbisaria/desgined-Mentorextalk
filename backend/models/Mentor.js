@@ -1,10 +1,15 @@
+// models/Mentor.js
 const mongoose = require('mongoose');
 
 const mentorSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  expertise: { type: String, required: true },
   bio: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now }
+  company: { type: String, required: true },
+  skills: [{ type: String, required: true }], // Array of skills
+  domains: [{ type: String, required: true }], // Array of domains
+  createdAt: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model('Mentor', mentorSchema);
+const Mentor = mongoose.model('Mentor', mentorSchema);
+
+module.exports = Mentor;
