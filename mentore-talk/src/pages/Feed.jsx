@@ -3,7 +3,6 @@ import axios from 'axios';
 import styled from 'styled-components';
 import { io } from 'socket.io-client';
 
-
 const colors = {
   primary: '#121212', // Darker background
   secondary: '#00e676', // Bright accent color
@@ -120,34 +119,36 @@ const Feed = () => {
   }, []);
 
   useEffect(() => {
+    fetchPosts(); // Fetch posts on component mount
+
     const socket = io('http://localhost:5000', {
       transports: ['websocket'],
       upgrade: false
     });
-  
+
     socket.on('connect', () => {
       console.log('Connected to server');
     });
-  
+
     socket.on('disconnect', () => {
       console.log('Disconnected from server');
     });
-  
+
     socket.on('connect_error', (error) => {
       console.error('Connection error:', error);
     });
-  
+
     // Listen for new posts
     socket.on('newPost', (post) => {
       console.log('New post received:', post);
       setPosts(prevPosts => [post, ...prevPosts]); // Add new post to the state
     });
-  
+
     return () => {
       socket.disconnect(); // Clean up the connection on unmount
     };
-  }, []);
-  
+  }, [fetchPosts]); // Include fetchPosts as a dependency
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
@@ -155,7 +156,7 @@ const Feed = () => {
     if (image) {
       formData.append('image', image);
     }
-  
+
     try {
       const token = localStorage.getItem('token');
       await axios.post('http://localhost:5000/api/feed', formData, {
@@ -166,12 +167,11 @@ const Feed = () => {
       });
       setContent('');
       setImage(null);
-      fetchPosts();  // Refetch the posts after submission
+      // New post will be added by socket, no need to refetch
     } catch (error) {
       console.error('Error creating post:', error.response ? error.response.data : error.message);
     }
   };
-  
 
   return (
     <FeedWrapper>
@@ -198,7 +198,7 @@ const Feed = () => {
               <PostRole>{post.author.role}</PostRole>
             </PostHeader>
             <PostContent>{post.content}</PostContent>
-            {post.image && <PostImage src={post.image} alt="Post image" />}
+            {post.image && <PostImage src={`http://localhost:5000/uploads/${post.image}`} alt="Post image" />}
           </PostCard>
         ))}
       </PostList>
