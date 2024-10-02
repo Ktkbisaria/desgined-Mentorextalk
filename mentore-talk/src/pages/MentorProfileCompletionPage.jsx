@@ -312,10 +312,10 @@ const MentorProfileCompletion = () => {
               type="number"
               id="graduationYear"
               value={formData.education.graduationYear}
-              onChange={(e) => handleNestedChange('education', 'graduationYear', e.target.value)}
+              onChange={(e) => handleNestedChange('education', 'graduationYear', e.target.value.toString())}
               placeholder="Year of graduation"
               required
-            />
+             />
           </FormSection>
         );
       case 3:
