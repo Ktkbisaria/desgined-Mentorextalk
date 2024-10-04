@@ -154,7 +154,7 @@ const SectionCard = styled.div`
     box-shadow: 0 6px 8px rgba(0, 199, 133, 0.2);
   }
 `;
-// Define styled components for Input and TextArea at the top of the file
+
 const Input = styled.input`
   background-color: rgba(255, 255, 255, 0.1);
   color: ${colors.tertiary};
@@ -191,7 +191,6 @@ const TextArea = styled.textarea`
   }
 `;
 
-
 const SectionHeader = styled.h3`
   font-size: 1.5rem;
   color: ${colors.secondary};
@@ -227,6 +226,7 @@ const Profile = () => {
           }
         });
         setUserData(response.data);
+        setEditedData(response.data);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching user profile:', err);
@@ -239,13 +239,6 @@ const Profile = () => {
 
   const handleEdit = () => {
     setIsEditing(true);
-    setEditedData({
-      username: userData.username || '',
-      bio: userData.bio || '',
-      education: userData.education || '',
-      experience: userData.experience || '',
-      skills: userData.skills ? userData.skills.join(', ') : '',
-    });
   };
 
   const handleSave = async () => {
@@ -254,16 +247,12 @@ const Profile = () => {
       if (!token) {
         throw new Error('No token found');
       }
-      const updatedData = {
-        ...editedData,
-        skills: editedData.skills.split(',').map(skill => skill.trim())
-      };
-      await axios.put('http://localhost:5000/api/users/profile', updatedData, {
+      await axios.put('http://localhost:5000/api/users/profile', editedData, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
-      setUserData({ ...userData, ...updatedData });
+      setUserData(editedData);
       setIsEditing(false);
     } catch (err) {
       console.error('Error saving profile:', err);
@@ -272,14 +261,54 @@ const Profile = () => {
   };
 
   const handleChange = (e) => {
-    setEditedData({
-      ...editedData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setEditedData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
+
+  const handleNestedChange = (category, field, value) => {
+    setEditedData(prevData => ({
+      ...prevData,
+      [category]: {
+        ...prevData[category],
+        [field]: value
+      }
+    }));
   };
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
+  };
+
+  const renderExperience = (experience) => {
+    if (!experience) return "No experience data available";
+    if (typeof experience === 'string') return experience;
+    
+    return (
+      <div>
+        <p><strong>Company:</strong> {experience.company}</p>
+        <p><strong>Job Title:</strong> {experience.jobTitle}</p>
+        <p><strong>Start Date:</strong> {experience.startDate}</p>
+        <p><strong>End Date:</strong> {experience.endDate || 'Present'}</p>
+        <p><strong>Responsibilities:</strong> {experience.responsibilities}</p>
+      </div>
+    );
+  };
+
+  const renderEducation = (education) => {
+    if (!education) return "No education data available";
+    if (typeof education === 'string') return education;
+    
+    return (
+      <div>
+        <p><strong>Level:</strong> {education.level}</p>
+        <p><strong>Field of Study:</strong> {education.fieldOfStudy}</p>
+        <p><strong>Institution:</strong> {education.institution}</p>
+        <p><strong>Graduation Year:</strong> {education.graduationYear}</p>
+      </div>
+    );
   };
 
   if (loading) return <ProfileWrapper>Loading...</ProfileWrapper>;
@@ -338,14 +367,40 @@ const Profile = () => {
             <SectionHeader>Experience</SectionHeader>
             <UserActivity>
               {isEditing ? (
-                <Input
-                  name="experience"
-                  value={editedData.experience}
-                  onChange={handleChange}
-                  placeholder="Your experience..."
-                />
+                <>
+                  <Input
+                    name="company"
+                    value={editedData.experience?.company || ''}
+                    onChange={(e) => handleNestedChange('experience', 'company', e.target.value)}
+                    placeholder="Company"
+                  />
+                  <Input
+                    name="jobTitle"
+                    value={editedData.experience?.jobTitle || ''}
+                    onChange={(e) => handleNestedChange('experience', 'jobTitle', e.target.value)}
+                    placeholder="Job Title"
+                  />
+                  <Input
+                    name="startDate"
+                    type="date"
+                    value={editedData.experience?.startDate || ''}
+                    onChange={(e) => handleNestedChange('experience', 'startDate', e.target.value)}
+                  />
+                  <Input
+                    name="endDate"
+                    type="date"
+                    value={editedData.experience?.endDate || ''}
+                    onChange={(e) => handleNestedChange('experience', 'endDate', e.target.value)}
+                  />
+                  <TextArea
+                    name="responsibilities"
+                    value={editedData.experience?.responsibilities || ''}
+                    onChange={(e) => handleNestedChange('experience', 'responsibilities', e.target.value)}
+                    placeholder="Responsibilities"
+                  />
+                </>
               ) : (
-                userData.experience || "Experience not specified"
+                renderExperience(userData.experience)
               )}
             </UserActivity>
           </SectionCard>
@@ -356,14 +411,34 @@ const Profile = () => {
             <SectionHeader>Education</SectionHeader>
             <UserActivity>
               {isEditing ? (
-                <Input
-                  name="education"
-                  value={editedData.education}
-                  onChange={handleChange}
-                  placeholder="Your education..."
-                />
+                <>
+                  <Input
+                    name="level"
+                    value={editedData.education?.level || ''}
+                    onChange={(e) => handleNestedChange('education', 'level', e.target.value)}
+                    placeholder="Degree Level"
+                  />
+                  <Input
+                    name="fieldOfStudy"
+                    value={editedData.education?.fieldOfStudy || ''}
+                    onChange={(e) => handleNestedChange('education', 'fieldOfStudy', e.target.value)}
+                    placeholder="Field of Study"
+                  />
+                  <Input
+                    name="institution"
+                    value={editedData.education?.institution || ''}
+                    onChange={(e) => handleNestedChange('education', 'institution', e.target.value)}
+                    placeholder="Institution"
+                  />
+                  <Input
+                    name="graduationYear"
+                    value={editedData.education?.graduationYear || ''}
+                    onChange={(e) => handleNestedChange('education', 'graduationYear', e.target.value)}
+                    placeholder="Graduation Year"
+                  />
+                </>
               ) : (
-                userData.education || "Education not specified"
+                renderEducation(userData.education)
               )}
             </UserActivity>
           </SectionCard>
@@ -373,13 +448,12 @@ const Profile = () => {
           <SectionCard>
             <SectionHeader>Achievements</SectionHeader>
             <UserActivity>
-              {/* Render achievements */}
               {userData.achievements || "No achievements yet"}
             </UserActivity>
           </SectionCard>
         )}
 
-        {activeTab === 'Reviews' && (
+         {activeTab === 'Reviews' && (
           <SectionCard>
             <SectionHeader>Reviews</SectionHeader>
             <UserActivity>
