@@ -1,42 +1,95 @@
-// controllers/mentorController.js
-const Mentor = require('../models/Mentor');
+const User = require('../models/User'); // Assuming this is the path to the user schema model
 
-// Get mentors based on filters
-const getMentors = async (req, res) => {
+// Get all mentors
+exports.getAllMentors = async (req, res) => {
   try {
-    const { search, companies, skills, domains } = req.query;
-    let query = {};
-
-    // Text search for name or bio
-    if (search) {
-      query.$or = [
-        { name: { $regex: search, $options: 'i' } },  // Case-insensitive
-        { bio: { $regex: search, $options: 'i' } }
-      ];
-    }
-
-    // Filter by selected companies
-    if (companies) {
-      query.company = { $in: companies.split(',') };
-    }
-
-    // Filter by selected skills
-    if (skills) {
-      query.skills = { $in: skills.split(',') };
-    }
-
-    // Filter by selected domains
-    if (domains) {
-      query.domains = { $in: domains.split(',') };
-    }
-
-    const mentors = await Mentor.find(query);
-    res.json(mentors);
+    const mentors = await User.find({ role: 'mentor' });
+    res.status(200).json({
+      status: 'success',
+      results: mentors.length,
+      data: { mentors }
+    });
   } catch (err) {
-    res.status(500).json({ message: 'Server Error', error: err.message });
+    res.status(400).json({
+      status: 'fail',
+      message: err.message
+    });
   }
 };
 
-module.exports = {
-  getMentors
+// Get a single mentor by ID
+exports.getMentorById = async (req, res) => {
+  try {
+    const mentor = await User.findById(req.params.id);
+
+    if (!mentor || mentor.role !== 'mentor') {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Mentor not found'
+      });
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: { mentor }
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: err.message
+    });
+  }
 };
+
+// Update mentor profile
+exports.updateMentor = async (req, res) => {
+  try {
+    const mentor = await User.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true
+    });
+
+    if (!mentor || mentor.role !== 'mentor') {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Mentor not found'
+      });
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: { mentor }
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: err.message
+    });
+  }
+};
+
+// Delete mentor
+exports.deleteMentor = async (req, res) => {
+  try {
+    const mentor = await User.findByIdAndDelete(req.params.id);
+
+    if (!mentor || mentor.role !== 'mentor') {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Mentor not found'
+      });
+    }
+
+    res.status(204).json({
+      status: 'success',
+      data: null
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'fail',
+      message: err.message
+    });
+  }
+};
+
+// Create a new

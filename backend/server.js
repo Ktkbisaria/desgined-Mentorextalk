@@ -48,6 +48,7 @@ app.use('/api/auth', authRoutes); // For authentication routes (signup, login)
 app.use('/api/users', userRoutes); // For user-related routes (profile)
 app.use('/api/feed', feedRoutes(io)); // Pass io instance to feed routes
 app.use('/api/mentors', mentorRoutes);
+app.use('/api/v1/mentors', mentorRoutes);
 
 // Handle WebSocket connections
 io.on('connection', (socket) => {
