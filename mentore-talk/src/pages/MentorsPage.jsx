@@ -24,14 +24,35 @@ const Header = styled.header`
   margin-bottom: 2rem;
 `;
 
+const SearchContainer = styled.div`
+  display: flex;
+  width: 100%;
+  max-width: 600px;
+`;
+
 const SearchBar = styled.input`
   padding: 0.75rem 1rem;
   width: 100%;
-  max-width: 500px;
-  border-radius: 8px;
+  border-radius: 8px 0 0 8px;
   border: none;
   outline: none;
   font-size: 1rem;
+`;
+
+const SearchButton = styled.button`
+  padding: 0.75rem 1.5rem;
+  background-color: ${colors.secondary};
+  color: ${colors.primary};
+  border: none;
+  border-radius: 0 8px 8px 0;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: ${colors.highlight};
+  }
 `;
 
 const MentorGrid = styled.div`
@@ -86,7 +107,7 @@ const SkillTag = styled.span`
 
 const MentorsPage = () => {
   const [mentors, setMentors] = useState([]);
-  const [search, setSearch] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -95,7 +116,7 @@ const MentorsPage = () => {
     setError(null);
     try {
       const response = await axios.get('http://localhost:5000/api/v1/mentors', {
-        params: { search },
+        params: { search: searchTerm },
       });
       setMentors(response.data.data.mentors);
     } catch (err) {
@@ -106,24 +127,30 @@ const MentorsPage = () => {
     }
   };
 
+  const handleSearch = () => {
+    fetchMentors();
+  };
+
   useEffect(() => {
     fetchMentors();
-  }, [search]);
+  }, []); // Fetch mentors on initial load
 
   return (
     <PageWrapper>
       <Header>
-        <SearchBar
-          type="text"
-          placeholder="Search mentors..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        <SearchContainer>
+          <SearchBar
+            type="text"
+            placeholder="Search mentors by username or skill..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+          />
+          <SearchButton onClick={handleSearch}>Search</SearchButton>
+        </SearchContainer>
       </Header>
-
       {loading && <p>Loading mentors...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
-
       <MentorGrid>
         {mentors.length > 0 ? (
           mentors.map((mentor) => (

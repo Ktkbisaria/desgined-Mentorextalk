@@ -3,7 +3,20 @@ const User = require('../models/User'); // Assuming this is the path to the user
 // Get all mentors
 exports.getAllMentors = async (req, res) => {
   try {
-    const mentors = await User.find({ role: 'mentor' });
+    const { search } = req.query;
+    let query = { role: 'mentor' };
+
+    if (search) {
+      query = {
+        role: 'mentor',
+        $or: [
+          { username: { $regex: search, $options: 'i' } },
+          { skills: { $regex: search, $options: 'i' } }
+        ]
+      };
+    }
+
+    const mentors = await User.find(query);
     res.status(200).json({
       status: 'success',
       results: mentors.length,
@@ -16,7 +29,6 @@ exports.getAllMentors = async (req, res) => {
     });
   }
 };
-
 // Get a single mentor by ID
 exports.getMentorById = async (req, res) => {
   try {
