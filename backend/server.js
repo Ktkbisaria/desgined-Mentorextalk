@@ -10,6 +10,8 @@ const path = require('path');
 const http = require('http'); // Import the HTTP module
 const mentorRoutes =require('./routes/mentorRoutes')
 const socketIo = require('socket.io'); // Import socket.io
+const resumeRoutes = require('./routes/resumeRoutes');
+// ...
 
 dotenv.config();
 
@@ -49,6 +51,8 @@ app.use('/api/users', userRoutes); // For user-related routes (profile)
 app.use('/api/feed', feedRoutes(io)); // Pass io instance to feed routes
 app.use('/api/mentors', mentorRoutes);
 app.use('/api/v1/mentors', mentorRoutes);
+app.use('/api/resumes', resumeRoutes);
+
 
 // Handle WebSocket connections
 io.on('connection', (socket) => {
