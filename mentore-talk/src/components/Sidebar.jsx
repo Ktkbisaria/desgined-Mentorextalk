@@ -1,8 +1,7 @@
-// src/components/Sidebar.jsx
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { Menu, X, Users, Book, HelpCircle, Map, Code, Rss } from 'lucide-react';
+import { Menu, X, Users, Book, HelpCircle, Map, Code, Rss, FileText } from 'lucide-react';
 
 // Define new colors
 const colors = {
@@ -21,8 +20,8 @@ const SidebarContainer = styled.div`
   background-color: ${colors.primary};
   transition: left 0.3s ease-in-out;
   z-index: 1000;
-  backdrop-filter: blur(8px); /* Adds a blur effect for modern look */
-  border-right: 1px solid rgba(255, 255, 255, 0.2); /* Adds a subtle border */
+  backdrop-filter: blur(8px);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
 `;
 
 const SidebarHeader = styled.div`
@@ -80,7 +79,7 @@ const ToggleButton = styled.button`
   cursor: pointer;
   transition: left 0.3s ease-in-out;
   z-index: 1001;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Adds shadow for depth */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 `;
 
 const Overlay = styled.div`
@@ -129,6 +128,9 @@ const Sidebar = () => {
           </SidebarItem>
           <SidebarItem to="/feed">
             <Rss /> Feed
+          </SidebarItem>
+          <SidebarItem to="/resume-review">
+            <FileText /> Resume Review
           </SidebarItem>
         </SidebarContent>
       </SidebarContainer>

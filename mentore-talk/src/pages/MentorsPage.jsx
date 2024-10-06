@@ -7,6 +7,7 @@ const colors = {
   secondary: '#00c785',
   tertiary: '#FFFFFF',
   background: '#2c2f33',
+  highlight: '#ffdd57',
 };
 
 const PageWrapper = styled.div`
@@ -23,205 +24,160 @@ const Header = styled.header`
   margin-bottom: 2rem;
 `;
 
+const SearchContainer = styled.div`
+  display: flex;
+  width: 100%;
+  max-width: 600px;
+`;
+
 const SearchBar = styled.input`
   padding: 0.75rem 1rem;
   width: 100%;
-  max-width: 500px;
-  border-radius: 8px;
+  border-radius: 8px 0 0 8px;
   border: none;
   outline: none;
   font-size: 1rem;
 `;
 
-const FilterWrapper = styled.div`
-  display: flex;
-  justify-content: space-around;
-  margin: 2rem 0;
-  flex-wrap: wrap;
-  gap: 1rem;
+const SearchButton = styled.button`
+  padding: 0.75rem 1.5rem;
+  background-color: ${colors.secondary};
+  color: ${colors.primary};
+  border: none;
+  border-radius: 0 8px 8px 0;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: ${colors.highlight};
+  }
 `;
 
-const FilterBox = styled.div`
-  background-color: ${colors.background};
-  padding: 1rem;
-  border-radius: 8px;
-  flex: 1;
-  min-width: 250px;
-`;
-
-const FilterTitle = styled.h4`
-  margin-bottom: 1rem;
-  color: ${colors.tertiary};
-`;
-
-const Checkbox = styled.input`
-  margin-right: 0.5rem;
-`;
-
-const MentorSuggestions = styled.div`
+const MentorGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
   margin-top: 2rem;
 `;
 
 const MentorCard = styled.div`
   background-color: ${colors.background};
-  padding: 1.5rem;
   border-radius: 8px;
-  margin-bottom: 1rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
+  align-items: center;
 `;
 
-const MentorName = styled.h3`
+const ProfilePicture = styled.img`
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+`;
+
+const Username = styled.h3`
   color: ${colors.secondary};
   margin-bottom: 0.5rem;
 `;
 
+const Experience = styled.p`
+  color: ${colors.tertiary};
+  margin-bottom: 0.5rem;
+`;
+
+const SkillsWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 1rem;
+`;
+
+const SkillTag = styled.span`
+  background-color: ${colors.secondary};
+  color: ${colors.primary};
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+`;
+
 const MentorsPage = () => {
   const [mentors, setMentors] = useState([]);
-  const [search, setSearch] = useState('');
-  const [selectedCompanies, setSelectedCompanies] = useState([]);
-  const [selectedSkills, setSelectedSkills] = useState([]);
-  const [selectedDomains, setSelectedDomains] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const fetchMentors = async () => {
+    setLoading(true);
+    setError(null);
     try {
-      const response = await axios.get('http://localhost:5000/api/mentors', {
-        params: {
-          search,
-          companies: selectedCompanies.join(','),
-          skills: selectedSkills.join(','),
-          domains: selectedDomains.join(','),
-        },
+      const response = await axios.get('http://localhost:5000/api/v1/mentors', {
+        params: { search: searchTerm },
       });
-      setMentors(response.data);
+      setMentors(response.data.data.mentors);
     } catch (err) {
       console.error('Error fetching mentors:', err);
+      setError('Failed to fetch mentors. Please try again later.');
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleSearch = () => {
+    fetchMentors();
   };
 
   useEffect(() => {
     fetchMentors();
-  }, [search, selectedCompanies, selectedSkills, selectedDomains]);
-
-  const handleCheckboxChange = (e, setFilter) => {
-    const { name, checked } = e.target;
-    setFilter((prev) =>
-      checked ? [...prev, name] : prev.filter((item) => item !== name)
-    );
-  };
+  }, []); // Fetch mentors on initial load
 
   return (
     <PageWrapper>
       <Header>
-        <SearchBar
-          type="text"
-          placeholder="Search here..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        <SearchContainer>
+          <SearchBar
+            type="text"
+            placeholder="Search mentors by username or skill..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+          />
+          <SearchButton onClick={handleSearch}>Search</SearchButton>
+        </SearchContainer>
       </Header>
-
-      <FilterWrapper>
-        <FilterBox>
-          <FilterTitle>Companies</FilterTitle>
-          <div>
-            <Checkbox
-              type="checkbox"
-              name="Google"
-              onChange={(e) => handleCheckboxChange(e, setSelectedCompanies)}
-            />
-            Google
-          </div>
-          <div>
-            <Checkbox
-              type="checkbox"
-              name="Microsoft"
-              onChange={(e) => handleCheckboxChange(e, setSelectedCompanies)}
-            />
-            Microsoft
-          </div>
-          <div>
-            <Checkbox
-              type="checkbox"
-              name="Amazon"
-              onChange={(e) => handleCheckboxChange(e, setSelectedCompanies)}
-            />
-            Amazon
-          </div>
-        </FilterBox>
-
-        <FilterBox>
-          <FilterTitle>Skills</FilterTitle>
-          <div>
-            <Checkbox
-              type="checkbox"
-              name="React"
-              onChange={(e) => handleCheckboxChange(e, setSelectedSkills)}
-            />
-            React
-          </div>
-          <div>
-            <Checkbox
-              type="checkbox"
-              name="C++"
-              onChange={(e) => handleCheckboxChange(e, setSelectedSkills)}
-            />
-            C++
-          </div>
-          <div>
-            <Checkbox
-              type="checkbox"
-              name="Python"
-              onChange={(e) => handleCheckboxChange(e, setSelectedSkills)}
-            />
-            Python
-          </div>
-        </FilterBox>
-
-        <FilterBox>
-          <FilterTitle>Domains</FilterTitle>
-          <div>
-            <Checkbox
-              type="checkbox"
-              name="Web Development"
-              onChange={(e) => handleCheckboxChange(e, setSelectedDomains)}
-            />
-            Web Development
-          </div>
-          <div>
-            <Checkbox
-              type="checkbox"
-              name="Cloud Computing"
-              onChange={(e) => handleCheckboxChange(e, setSelectedDomains)}
-            />
-            Cloud Computing
-          </div>
-          <div>
-            <Checkbox
-              type="checkbox"
-              name="App Development"
-              onChange={(e) => handleCheckboxChange(e, setSelectedDomains)}
-            />
-            App Development
-          </div>
-        </FilterBox>
-      </FilterWrapper>
-
-      <MentorSuggestions>
+      {loading && <p>Loading mentors...</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <MentorGrid>
         {mentors.length > 0 ? (
           mentors.map((mentor) => (
             <MentorCard key={mentor._id}>
-              <MentorName>{mentor.name}</MentorName>
-              <p>{mentor.bio}</p>
-              <p>Skills: {mentor.skills.join(', ')}</p>
-              <p>Company: {mentor.company}</p>
-              <p>Domains: {mentor.domains.join(', ')}</p>
+              <ProfilePicture 
+                src={mentor.profilePicture || '/default-profile.png'} 
+                alt={mentor.username}
+              />
+              <Username>{mentor.username}</Username>
+              <Experience>
+                {mentor.experience ? `${mentor.experience.jobTitle} at ${mentor.experience.company}` : 'No experience listed'}
+              </Experience>
+              <SkillsWrapper>
+                {mentor.skills && mentor.skills.length > 0 ? (
+                  mentor.skills.map((skill, index) => (
+                    <SkillTag key={index}>{skill}</SkillTag>
+                  ))
+                ) : (
+                  <SkillTag>No skills listed</SkillTag>
+                )}
+              </SkillsWrapper>
             </MentorCard>
           ))
         ) : (
-          <p>No mentors found</p>
+          <p>No mentors found.</p>
         )}
-      </MentorSuggestions>
+      </MentorGrid>
     </PageWrapper>
   );
 };

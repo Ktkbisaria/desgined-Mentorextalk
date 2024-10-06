@@ -9,6 +9,8 @@ import MentorsPage from './pages/MentorsPage';
 import Profile from './pages/Profile';
 import MentorProfileCompletionPage from './pages/MentorProfileCompletionPage';
 import CreatePost from './pages/CreatePost';
+import ResumeReviewPage from './pages/ResumeReviewPage';
+
 
 
 // Placeholder components for the different pages
@@ -28,6 +30,7 @@ const App = () => {
         <Route path="/mentor-profile-completion" element={<MentorProfileCompletionPage />} />
         <Route path="/Profile" element={<Profile />} />
         <Route path="/create-post" element={<CreatePost />} />
+
         
     
   
@@ -40,6 +43,7 @@ const App = () => {
           <Route path="/mentors" element={<MentorsPage />} />
           <Route path="/ask" element={<AskPage />} />
           <Route path="/roadmaps" element={<RoadmapsPage />} />
+          <Route path="/resume-review" element={<ResumeReviewPage />} />
           <Route path="/problems" element={<ProblemsPage />} />
           
         </Route>
