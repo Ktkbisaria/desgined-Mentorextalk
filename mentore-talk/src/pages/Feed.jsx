@@ -198,7 +198,8 @@ const Feed = () => {
               <PostRole>{post.author.role}</PostRole>
             </PostHeader>
             <PostContent>{post.content}</PostContent>
-            {post.image && <PostImage src={`http://localhost:5000/uploads/${post.image}`} alt="Post image" />}
+            {post.image && <PostImage src={`http://localhost:5000${post.image}`} alt="Post image" />}
+
           </PostCard>
         ))}
       </PostList>
