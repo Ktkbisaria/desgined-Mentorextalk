@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const resumeSchema = new mongoose.Schema({
+const ResumeSchema = new mongoose.Schema({
   student: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -8,6 +8,10 @@ const resumeSchema = new mongoose.Schema({
   },
   file: {
     type: String,
+    required: true
+  },
+  fileId: {
+    type: mongoose.Schema.Types.ObjectId,
     required: true
   },
   comments: [{
@@ -27,4 +31,4 @@ const resumeSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('Resume', resumeSchema);
+module.exports = mongoose.model('Resume', ResumeSchema);
