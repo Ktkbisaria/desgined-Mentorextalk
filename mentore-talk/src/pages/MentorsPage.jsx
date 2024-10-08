@@ -8,6 +8,7 @@ const colors = {
   tertiary: '#FFFFFF',
   background: '#2c2f33',
   highlight: '#ffdd57',
+  lightGrey: '#4a4a4a',
 };
 
 const PageWrapper = styled.div`
@@ -19,74 +20,95 @@ const PageWrapper = styled.div`
 
 const Header = styled.header`
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
 `;
 
 const SearchContainer = styled.div`
   display: flex;
   width: 100%;
   max-width: 600px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
 `;
 
 const SearchBar = styled.input`
-  padding: 0.75rem 1rem;
+  padding: 1rem 1.5rem;
   width: 100%;
-  border-radius: 8px 0 0 8px;
   border: none;
   outline: none;
   font-size: 1rem;
+  background-color: ${colors.background};
+  color: ${colors.tertiary};
+
+  &::placeholder {
+    color: ${colors.lightGrey};
+  }
 `;
 
 const SearchButton = styled.button`
-  padding: 0.75rem 1.5rem;
+  padding: 1rem 1.5rem;
   background-color: ${colors.secondary};
   color: ${colors.primary};
   border: none;
-  border-radius: 0 8px 8px 0;
   cursor: pointer;
   font-size: 1rem;
   font-weight: bold;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.1s ease;
 
   &:hover {
     background-color: ${colors.highlight};
+  }
+
+  &:active {
+    transform: scale(0.98);
   }
 `;
 
 const MentorGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 2rem;
   margin-top: 2rem;
 `;
 
 const MentorCard = styled.div`
   background-color: ${colors.background};
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  }
 `;
 
 const ProfilePicture = styled.img`
-  width: 100px;
-  height: 100px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 1rem;
+  border: 3px solid ${colors.secondary};
 `;
 
 const Username = styled.h3`
   color: ${colors.secondary};
   margin-bottom: 0.5rem;
+  font-size: 1.2rem;
 `;
 
 const Experience = styled.p`
   color: ${colors.tertiary};
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
 `;
 
 const SkillsWrapper = styled.div`
@@ -100,9 +122,22 @@ const SkillsWrapper = styled.div`
 const SkillTag = styled.span`
   background-color: ${colors.secondary};
   color: ${colors.primary};
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
   font-size: 0.8rem;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: ${colors.highlight};
+  }
+`;
+
+const StatusMessage = styled.p`
+  text-align: center;
+  font-size: 1.1rem;
+  margin-top: 2rem;
+  color: ${props => props.error ? 'red' : colors.tertiary};
 `;
 
 const MentorsPage = () => {
@@ -149,8 +184,8 @@ const MentorsPage = () => {
           <SearchButton onClick={handleSearch}>Search</SearchButton>
         </SearchContainer>
       </Header>
-      {loading && <p>Loading mentors...</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {loading && <StatusMessage>Loading mentors...</StatusMessage>}
+      {error && <StatusMessage error>{error}</StatusMessage>}
       <MentorGrid>
         {mentors.length > 0 ? (
           mentors.map((mentor) => (
@@ -175,7 +210,7 @@ const MentorsPage = () => {
             </MentorCard>
           ))
         ) : (
-          <p>No mentors found.</p>
+          <StatusMessage>No mentors found.</StatusMessage>
         )}
       </MentorGrid>
     </PageWrapper>
