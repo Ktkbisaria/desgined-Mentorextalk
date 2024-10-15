@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import styled from 'styled-components';
 import { Outlet, Link } from 'react-router-dom';
-
 
 // Define new colors consistent with OverviewPage
 const colors = {
@@ -80,7 +79,45 @@ const NavLink = styled.a`
   }
 `;
 
+// Chat Pop-up Style
+const ChatPopup = styled.div`
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 25%; /* 1/4th of the page */
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 10;
+  padding: 1rem;
+  color: ${colors.tertiary};
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
+  display: ${({ isVisible }) => (isVisible ? 'block' : 'none')};
+`;
+
+// Close Button for Chat
+const CloseButton = styled.button`
+  background-color: ${colors.secondary};
+  color: ${colors.primary};
+  border: none;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  margin-bottom: 1rem;
+
+  &:hover {
+    background-color: ${colors.tertiary};
+    color: ${colors.primary};
+  }
+`;
+
 const DashboardLayout = () => {
+  // State to manage chat window visibility
+  const [isChatVisible, setIsChatVisible] = useState(false);
+
+  // Function to toggle chat window visibility
+  const toggleChat = () => {
+    setIsChatVisible(!isChatVisible);
+  };
+
   return (
     <LayoutWrapper>
       <Sidebar />
@@ -90,10 +127,18 @@ const DashboardLayout = () => {
           <Nav>
             <NavLink as={Link} to="/profile">Profile</NavLink>
             <NavLink as={Link} to="/settings">Settings</NavLink>
+            <NavLink as="button" onClick={toggleChat}>Chat</NavLink> {/* Chat Option */}
           </Nav>
         </Header>
         <Outlet /> {/* This is where the child routes will be rendered */}
       </Content>
+
+      {/* Chat Pop-up */}
+      <ChatPopup isVisible={isChatVisible}>
+        <CloseButton onClick={toggleChat}>Close Chat</CloseButton>
+        <h3>Chat Screen</h3>
+        <p>This is your chat window. Here you can chat with your mentors or users!</p>
+      </ChatPopup>
     </LayoutWrapper>
   );
 };
