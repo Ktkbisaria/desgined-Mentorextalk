@@ -10,13 +10,17 @@ import Profile from './pages/Profile';
 import MentorProfileCompletionPage from './pages/MentorProfileCompletionPage';
 import CreatePost from './pages/CreatePost';
 import ResumeReviewPage from './pages/ResumeReviewPage';
+import RoadmapsPage from './pages/RoadmapsPage';
+
+
+// In your Routes component, replace the placeholder RoadmapsPage with the new component
+
 
 
 
 // Placeholder components for the different pages
 const CommunityPage = () => <div>Community Page</div>;
 const AskPage = () => <div>Ask Page</div>;
-const RoadmapsPage = () => <div>Roadmaps Page</div>;
 const ProblemsPage = () => <div>Problems Page</div>;
 
 const App = () => {
@@ -44,7 +48,7 @@ const App = () => {
           <Route path="/ask" element={<AskPage />} />
           <Route path="/roadmaps" element={<RoadmapsPage />} />
           <Route path="/resume-review" element={<ResumeReviewPage />} />
-          <Route path="/problems" element={<ProblemsPage />} />
+          
           
         </Route>
       </Routes>

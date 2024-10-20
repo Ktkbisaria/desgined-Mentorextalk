@@ -150,6 +150,7 @@ const ErrorMessage = styled.div`
   margin-bottom: 1rem;
 `;
 
+
 const MentorProfileCompletion = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -167,9 +168,12 @@ const MentorProfileCompletion = () => {
       graduationYear: '',
     },
     skills: [],
-    mentorSpecialty: '',
+    mentorSpecialty: [],
     username: '',
     bio: '',
+    teachingExperience: '',
+    currentCompany: '',
+    previousCompanies: [],
   });
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -192,17 +196,16 @@ const MentorProfileCompletion = () => {
     }));
   };
 
-  const handleSkillsChange = (e) => {
-    const selectedSkills = Array.from(e.target.selectedOptions, option => option.value);
+  const handleMultiSelect = (field, value) => {
     setFormData((prevData) => ({
       ...prevData,
-      skills: selectedSkills,
+      [field]: Array.from(value, option => option.value),
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (step < 4) {
+    if (step < 5) {
       setStep(step + 1);
     } else {
       try {
@@ -230,6 +233,186 @@ const MentorProfileCompletion = () => {
         return (
           <FormSection>
             <h2>Experience Details</h2>
+            <Label htmlFor="teachingExperience">Teaching Experience</Label>
+            <Select
+              id="teachingExperience"
+              name="teachingExperience"
+              value={formData.teachingExperience}
+              onChange={handleChange}
+            >
+              <option value="">Select your teaching experience</option>
+              <option value="Professor">Professor</option>
+              <option value="Corporate Mentor">Corporate Mentor</option>
+              <option value="Not involved in teaching">Not involved in teaching</option>
+            </Select>
+            {formData.teachingExperience === 'Professor' && (
+              <Input
+                type="text"
+                placeholder="Specify institution or academic experience"
+                name="academicInstitution"
+                onChange={handleChange}
+              />
+            )}
+            <Label htmlFor="currentCompany">Current Company</Label>
+            <Select
+              id="currentCompany"
+              name="currentCompany"
+              value={formData.currentCompany}
+              onChange={handleChange}
+            >
+              <option value="">Select your current company</option>
+              <option value="Google">Google</option>
+              <option value="Amazon">Amazon</option>
+              <option value="Facebook">Facebook</option>
+              <option value="Apple">Apple</option>
+              <option value="Netflix">Netflix</option>
+              <option value="Microsoft">Microsoft</option>
+              <option value="Other FAANG">Other FAANG</option>
+              <option value="Startup">Startup</option>
+              <option value="Mid-size IT">Mid-size IT</option>
+              <option value="Other">Other (Please specify)</option>
+            </Select>
+            {formData.currentCompany === 'Other' && (
+              <Input
+                type="text"
+                placeholder="Specify your company"
+                name="otherCompany"
+                onChange={handleChange}
+              />
+            )}
+            <Label htmlFor="previousCompanies">Previous Companies</Label>
+            <Select
+              id="previousCompanies"
+              name="previousCompanies"
+              multiple
+              value={formData.previousCompanies}
+              onChange={(e) => handleMultiSelect('previousCompanies', e.target.selectedOptions)}
+            >
+              <option value="Google">Google</option>
+              <option value="Amazon">Amazon</option>
+              <option value="Facebook">Facebook</option>
+              <option value="Apple">Apple</option>
+              <option value="Netflix">Netflix</option>
+              <option value="Microsoft">Microsoft</option>
+              <option value="Other FAANG">Other FAANG</option>
+              <option value="Startup">Startup</option>
+              <option value="Mid-size IT">Mid-size IT</option>
+              <option value="Other">Other</option>
+            </Select>
+          </FormSection>
+        );
+      case 2:
+        return (
+          <FormSection>
+            <h2>Education Details</h2>
+            <Label htmlFor="educationLevel">Degree Level</Label>
+            <Select
+              id="educationLevel"
+              value={formData.education.level}
+              onChange={(e) => handleNestedChange('education', 'level', e.target.value)}
+              required
+            >
+              <option value="">Select degree level</option>
+              <option value="Bachelor's">Bachelor's degree</option>
+              <option value="Master's">Master's degree</option>
+              <option value="PhD">PhD</option>
+              <option value="Diploma">Diploma</option>
+              <option value="Other">Other</option>
+            </Select>
+            <Label htmlFor="fieldOfStudy">Field of Study</Label>
+            <Input
+              type="text"
+              id="fieldOfStudy"
+              value={formData.education.fieldOfStudy}
+              onChange={(e) => handleNestedChange('education', 'fieldOfStudy', e.target.value)}
+              placeholder="e.g., Computer Science, Data Science"
+              required
+            />
+            <Label htmlFor="institution">Institution</Label>
+            <Select
+              id="institution"
+              value={formData.education.institution}
+              onChange={(e) => handleNestedChange('education', 'institution', e.target.value)}
+              required
+            >
+              <option value="">Select institution</option>
+              <option value="IIT Delhi">IIT Delhi</option>
+              <option value="IIT Mumbai">IIT Mumbai</option>
+              <option value="IISc Bangalore">IISc Bangalore</option>
+              <option value="BITS Pilani">BITS Pilani</option>
+              <option value="NIT">NIT</option>
+              <option value="Other">Other (Specify)</option>
+            </Select>
+            {formData.education.institution === 'Other' && (
+              <Input
+                type="text"
+                placeholder="Specify your institution"
+                onChange={(e) => handleNestedChange('education', 'otherInstitution', e.target.value)}
+              />
+            )}
+            <Label htmlFor="graduationYear">Graduation Year</Label>
+            <Input
+              type="number"
+              id="graduationYear"
+              value={formData.education.graduationYear}
+              onChange={(e) => handleNestedChange('education', 'graduationYear', e.target.value.toString())}
+              placeholder="Year of graduation"
+              required
+            />
+          </FormSection>
+        );
+      case 3:
+        return (
+          <FormSection>
+            <h2>Skills and Expertise</h2>
+            <Label htmlFor="skills">Technical Skills</Label>
+            <Select
+              id="skills"
+              multiple
+              value={formData.skills}
+              onChange={(e) => handleMultiSelect('skills', e.target.selectedOptions)}
+              style={{ height: '150px' }}
+              required
+            >
+              <option value="Python">Python</option>
+              <option value="Java">Java</option>
+              <option value="C++">C++</option>
+              <option value="JavaScript">JavaScript</option>
+              <option value="React">React</option>
+              <option value="Angular">Angular</option>
+              <option value="AWS">AWS</option>
+              <option value="Docker">Docker</option>
+              <option value="Machine Learning">Machine Learning</option>
+              <option value="Data Science">Data Science</option>
+              <option value="Kubernetes">Kubernetes</option>
+              <option value="MySQL">MySQL</option>
+              <option value="MongoDB">MongoDB</option>
+              <option value="Git">Git</option>
+              <option value="DevOps">DevOps</option>
+              <option value="Cybersecurity">Cybersecurity</option>
+            </Select>
+            <Label htmlFor="mentorSpecialty">Mentor Specialty</Label>
+            <Select
+              id="mentorSpecialty"
+              name="mentorSpecialty"
+              multiple
+              value={formData.mentorSpecialty}
+              onChange={(e) => handleMultiSelect('mentorSpecialty', e.target.selectedOptions)}
+              required
+            >
+              <option value="Career Guidance">Career Guidance</option>
+              <option value="Technical Skills">Technical Skills</option>
+              <option value="Personal Development">Personal Development</option>
+              <option value="Leadership">Leadership</option>
+              <option value="Startup Mentorship">Startup Mentorship</option>
+              <option value="Corporate Strategy">Corporate Strategy</option>
+            </Select>
+          </FormSection>
+        );
+      case 4:
+        return (
+          <FormSection>
+            <h2>Work Experience</h2>
             <Label htmlFor="company">Company</Label>
             <Input
               type="text"
@@ -273,98 +456,7 @@ const MentorProfileCompletion = () => {
             />
           </FormSection>
         );
-      case 2:
-        return (
-          <FormSection>
-            <h2>Education Details</h2>
-            <Label htmlFor="educationLevel">Degree Level</Label>
-            <Select
-              id="educationLevel"
-              value={formData.education.level}
-              onChange={(e) => handleNestedChange('education', 'level', e.target.value)}
-            >
-              <option value="">Select degree level</option>
-              <option value="Bachelor's">Bachelor's degree</option>
-              <option value="Master's">Master's degree</option>
-              <option value="PhD">PhD</option>
-              <option value="Other">Other</option>
-            </Select>
-            <Label htmlFor="fieldOfStudy">Field of Study</Label>
-            <Input
-              type="text"
-              id="fieldOfStudy"
-              value={formData.education.fieldOfStudy}
-              onChange={(e) => handleNestedChange('education', 'fieldOfStudy', e.target.value)}
-              placeholder="e.g., Computer Science"
-              required
-            />
-            <Label htmlFor="institution">Institution</Label>
-            <Input
-              type="text"
-              id="institution"
-              value={formData.education.institution}
-              onChange={(e) => handleNestedChange('education', 'institution', e.target.value)}
-              placeholder="University name"
-              required
-            />
-            <Label htmlFor="graduationYear">Graduation Year</Label>
-            <Input
-              type="number"
-              id="graduationYear"
-              value={formData.education.graduationYear}
-              onChange={(e) => handleNestedChange('education', 'graduationYear', e.target.value.toString())}
-              placeholder="Year of graduation"
-              required
-             />
-          </FormSection>
-        );
-      case 3:
-        return (
-          <FormSection>
-            <h2>Skills and Specialty</h2>
-            <Label htmlFor="skills">Technical Skills</Label>
-            <Select
-              id="skills"
-              multiple
-              value={formData.skills}
-              onChange={handleSkillsChange}
-              style={{ height: '150px' }}
-            >
-              <option value="Python">Python</option>
-              <option value="Java">Java</option>
-              <option value="C++">C++</option>
-              <option value="JavaScript">JavaScript</option>
-              <option value="React">React</option>
-              <option value="Angular">Angular</option>
-              <option value="Vue">Vue</option>
-              <option value="Node.js">Node.js</option>
-              <option value="AWS">AWS</option>
-              <option value="Docker">Docker</option>
-              <option value="Kubernetes">Kubernetes</option>
-              <option value="MySQL">MySQL</option>
-              <option value="MongoDB">MongoDB</option>
-              <option value="PostgreSQL">PostgreSQL</option>
-              <option value="Git">Git</option>
-              <option value="DevOps">DevOps</option>
-              <option value="Machine Learning">Machine Learning</option>
-              <option value="Data Science">Data Science</option>
-              <option value="Cybersecurity">Cybersecurity</option>
-            </Select>
-            <Label htmlFor="mentorSpecialty">Mentor Specialty</Label>
-            <Select
-              id="mentorSpecialty"
-              name="mentorSpecialty"
-              value={formData.mentorSpecialty}
-              onChange={handleChange}
-            >
-              <option value="">Select your specialty</option>
-              <option value="career-guidance">Career Guidance</option>
-              <option value="tech-skills">Tech Skills</option>
-              <option value="personal-development">Personal Development</option>
-            </Select>
-          </FormSection>
-        );
-      case 4:
+      case 5:
         return (
           <FormSection>
             <h2>Personal Information</h2>
@@ -384,7 +476,7 @@ const MentorProfileCompletion = () => {
               name="bio"
               value={formData.bio}
               onChange={handleChange}
-              placeholder="Tell us about yourself..."
+              placeholder="Provide a short bio that summarizes your experience, specialties, and mentoring approach."
               required
             />
           </FormSection>
@@ -398,12 +490,12 @@ const MentorProfileCompletion = () => {
     <PageWrapper>
       <ContentWrapper>
         <Title>Complete Your Mentor Profile</Title>
-        <Subtitle>Step {step} of 4</Subtitle>
+        <Subtitle>Step {step} of 5</Subtitle>
         {error && <ErrorMessage>{error}</ErrorMessage>}
         <Form onSubmit={handleSubmit}>
           {renderStep()}
           <Button type="submit">
-            {step < 4 ? 'Next' : 'Complete Profile'}
+            {step < 5 ? 'Next' : 'Complete Profile'}
           </Button>
         </Form>
       </ContentWrapper>

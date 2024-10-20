@@ -123,8 +123,8 @@ const Sidebar = () => {
           <SidebarItem to="/roadmaps">
             <Map /> Roadmaps
           </SidebarItem>
-          <SidebarItem to="/problems">
-            <Code /> Problems
+          <SidebarItem to="https://contest-hub-live.vercel.app/">
+            <Code /> Contest
           </SidebarItem>
           <SidebarItem to="/feed">
             <Rss /> Feed
