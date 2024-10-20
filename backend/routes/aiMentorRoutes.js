@@ -55,7 +55,8 @@ Please provide:
 1. Code quality assessment
 2. Potential bugs or issues
 3. Optimization suggestions
-4. Best practices recommendations`;
+4. Generate possible output of the code.
+5. Best practices recommendations`;
 
     const analysis = await handleGeminiRequest(prompt);
     res.json({ analysis });
