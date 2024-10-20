@@ -111,9 +111,6 @@ const Sidebar = () => {
           )}
         </SidebarHeader>
         <SidebarContent>
-          <SidebarItem to="/community">
-            <Users /> Community
-          </SidebarItem>
           <SidebarItem to="/mentors">
             <Book /> Mentors
           </SidebarItem>
@@ -131,6 +128,9 @@ const Sidebar = () => {
           </SidebarItem>
           <SidebarItem to="/resume-review">
             <FileText /> Resume Review
+          </SidebarItem>
+          <SidebarItem to="/ai-mentor">
+            <Book /> AI MENTORS
           </SidebarItem>
         </SidebarContent>
       </SidebarContainer>

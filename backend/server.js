@@ -14,11 +14,28 @@ const feedRoutes = require('./routes/feedRoutes');
 const mentorRoutes = require('./routes/mentorRoutes');
 const resumeRoutes = require('./routes/resumeRoutes');
 const errorHandler = require('./middlewares/errorHandler');
+const aiMentorRoutes = require('./routes/aiMentorRoutes');
+// ...
 
-dotenv.config();
+
+require('dotenv').config();
+
+
+
+
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || 'default_or_placeholder_api_key';
+if (!process.env.GEMINI_API_KEY) {
+  console.error('GEMINI_API_KEY is not set in environment variables');
+  process.exit(1); // Exit the application
+}
+
+console.log('GEMINI_API_KEY:', process.env.GEMINI_API_KEY);
+
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
 
 // Create an HTTP server
 const server = http.createServer(app);
@@ -74,6 +91,7 @@ mongoose.connect(process.env.MONGO_URI, {
   app.use('/api/mentors', mentorRoutes);
   app.use('/api/v1/mentors', mentorRoutes);
   app.use('/api/resumes', resumeRoutes(upload, conn.connection.db));
+ app.use('/api/ai-mentor', aiMentorRoutes);
 
   // Handle WebSocket connections
   io.on('connection', (socket) => {
@@ -86,10 +104,12 @@ mongoose.connect(process.env.MONGO_URI, {
 
   // Error handling middleware
   app.use(errorHandler);
+  
 
   // Start the server
   server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+    console.log(`GEMINI_API_KEY: ${process.env.GEMINI_API_KEY ? 'Set' : 'Not set'}`);
   });
 })
 .catch((error) => {

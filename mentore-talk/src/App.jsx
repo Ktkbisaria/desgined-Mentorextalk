@@ -11,6 +11,7 @@ import MentorProfileCompletionPage from './pages/MentorProfileCompletionPage';
 import CreatePost from './pages/CreatePost';
 import ResumeReviewPage from './pages/ResumeReviewPage';
 import RoadmapsPage from './pages/RoadmapsPage';
+import AICodingMentorPage from './pages/AICodingMentorPage';
 
 
 // In your Routes component, replace the placeholder RoadmapsPage with the new component
@@ -22,6 +23,7 @@ import RoadmapsPage from './pages/RoadmapsPage';
 const CommunityPage = () => <div>Community Page</div>;
 const AskPage = () => <div>Ask Page</div>;
 const ProblemsPage = () => <div>Problems Page</div>;
+
 
 const App = () => {
   return (
@@ -48,6 +50,7 @@ const App = () => {
           <Route path="/ask" element={<AskPage />} />
           <Route path="/roadmaps" element={<RoadmapsPage />} />
           <Route path="/resume-review" element={<ResumeReviewPage />} />
+          <Route path="/ai-mentor" element={<AICodingMentorPage />} /> {/* New route for AI Mentor */}
           
           
         </Route>
