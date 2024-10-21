@@ -8,6 +8,9 @@ const mentorSchema = new mongoose.Schema({
   skills: [{ type: String, required: true }], // Array of skills
   domains: [{ type: String, required: true }], // Array of domains
   createdAt: { type: Date, default: Date.now },
+
+  connections: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // Accepted connections
+  pendingRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] // Requests sent by others
 });
 
 const Mentor = mongoose.model('Mentor', mentorSchema);

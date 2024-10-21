@@ -65,19 +65,23 @@ const Nav = styled.nav`
 `;
 
 // NavLink Style with Hover Effect
+// Updated NavLink Style with Hover Effect for the "Chat" button
 const NavLink = styled.a`
   color: ${colors.tertiary};
   text-decoration: none;
   padding: 0.5rem;
   border-radius: 4px;
+  border: 2px solid ${colors.primary}; // Black border
+  background-color: ${colors.primary}; // Black background
   transition: background-color 0.3s, color 0.3s, transform 0.3s;
-  
+
   &:hover {
     background-color: ${colors.secondary};
     color: ${colors.primary};
     transform: scale(1.1);
   }
 `;
+
 
 // Chat Pop-up Style
 const ChatPopup = styled.div`

@@ -40,8 +40,13 @@ const userSchema = new mongoose.Schema({
   ],
 
   profilePicture: { type: String }, // URL to profile picture
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
+
+  connections: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // Accepted connections
+  pendingRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] // Requests sent by others
 });
+
+
 
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
