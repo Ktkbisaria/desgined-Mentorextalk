@@ -37,6 +37,12 @@ router.use((req, res, next) => {
   next();
 });
 
+// List of supported languages
+const supportedLanguages = [
+  'javascript', 'python', 'java', 'c++', 'c#', 'ruby', 'go', 'swift',
+  'kotlin', 'typescript', 'php', 'rust', 'scala', 'dart', 'r'
+];
+
 router.post('/code-analysis', async (req, res) => {
   try {
     const { code, language } = req.body;
@@ -45,13 +51,17 @@ router.post('/code-analysis', async (req, res) => {
       return res.status(400).json({ error: 'Code and language are required.' });
     }
 
+    if (!supportedLanguages.includes(language.toLowerCase())) {
+      return res.status(400).json({ error: 'Unsupported programming language.' });
+    }
+
     console.log('Received request for code analysis:', { language, codeLength: code.length });
 
     const prompt = `Analyze the following ${language} code and provide suggestions for improvement:
 
 ${code}
 
-Please provide:
+Generate concise and Please provide:
 1. Code quality assessment
 2. Potential bugs or issues
 3. Optimization suggestions
@@ -76,6 +86,10 @@ router.post('/generate-exercise', async (req, res) => {
 
     if (!language || !difficulty) {
       return res.status(400).json({ error: 'Language and difficulty are required.' });
+    }
+
+    if (!supportedLanguages.includes(language.toLowerCase())) {
+      return res.status(400).json({ error: 'Unsupported programming language.' });
     }
 
     console.log('Received request for exercise generation:', { language, difficulty });

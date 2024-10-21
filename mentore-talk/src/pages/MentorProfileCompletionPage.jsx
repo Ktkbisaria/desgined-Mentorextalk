@@ -196,13 +196,14 @@ const MentorProfileCompletion = () => {
     }));
   };
 
-  const handleMultiSelect = (field, value) => {
+  const handleMultiSelect = (field, options) => {
+    const values = Array.from(options, (option) => option.value); // Extract selected values
     setFormData((prevData) => ({
       ...prevData,
-      [field]: Array.from(value, option => option.value),
+      [field]: values,
     }));
   };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (step < 5) {
@@ -280,25 +281,6 @@ const MentorProfileCompletion = () => {
                 onChange={handleChange}
               />
             )}
-            <Label htmlFor="previousCompanies">Previous Companies</Label>
-            <Select
-              id="previousCompanies"
-              name="previousCompanies"
-              multiple
-              value={formData.previousCompanies}
-              onChange={(e) => handleMultiSelect('previousCompanies', e.target.selectedOptions)}
-            >
-              <option value="Google">Google</option>
-              <option value="Amazon">Amazon</option>
-              <option value="Facebook">Facebook</option>
-              <option value="Apple">Apple</option>
-              <option value="Netflix">Netflix</option>
-              <option value="Microsoft">Microsoft</option>
-              <option value="Other FAANG">Other FAANG</option>
-              <option value="Startup">Startup</option>
-              <option value="Mid-size IT">Mid-size IT</option>
-              <option value="Other">Other</option>
-            </Select>
           </FormSection>
         );
       case 2:
@@ -460,16 +442,6 @@ const MentorProfileCompletion = () => {
         return (
           <FormSection>
             <h2>Personal Information</h2>
-            <Label htmlFor="username">Username</Label>
-            <Input
-              type="text"
-              id="username"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              placeholder="Enter your username"
-              required
-            />
             <Label htmlFor="bio">Bio</Label>
             <TextArea
               id="bio"

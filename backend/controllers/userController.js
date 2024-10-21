@@ -23,6 +23,11 @@ exports.updateProfile = async (req, res) => {
     education,
     experience,
     skills,
+    teachingExperience,
+    academicInstitution,
+    currentCompany,
+    otherCompany,
+    previousCompanies,
     mentorSpecialty,
     profilePicture
   } = req.body;
@@ -42,23 +47,25 @@ exports.updateProfile = async (req, res) => {
         level: education.level,
         fieldOfStudy: education.fieldOfStudy,
         institution: education.institution,
-        graduationYear: education.graduationYear
+        graduationYear: education.graduationYear,
+        otherInstitution: education.otherInstitution
       };
     }
     if (experience) {
-      // Ensure experience is always an array
-      user.experience = Array.isArray(experience) ? experience : [experience];
-      
-      // Validate and format each experience entry
-      user.experience = user.experience.map(exp => ({
-        company: exp.company || '',
-        jobTitle: exp.jobTitle || '',
-        startDate: exp.startDate || null,
-        endDate: exp.endDate || null,
-        responsibilities: exp.responsibilities || ''
-      }));
+      user.experience = {
+        company: experience.company,
+        jobTitle: experience.jobTitle,
+        startDate: experience.startDate,
+        endDate: experience.endDate,
+        responsibilities: experience.responsibilities
+      };
     }
     if (skills) user.skills = skills;
+    if (teachingExperience) user.teachingExperience = teachingExperience;
+    if (academicInstitution) user.academicInstitution = academicInstitution;
+    if (currentCompany) user.currentCompany = currentCompany;
+    if (otherCompany) user.otherCompany = otherCompany;
+    if (previousCompanies) user.previousCompanies = previousCompanies;
     if (user.role === 'mentor' && mentorSpecialty) {
       user.mentorSpecialty = mentorSpecialty;
     }
@@ -74,6 +81,11 @@ exports.updateProfile = async (req, res) => {
       education: updatedUser.education,
       experience: updatedUser.experience,
       skills: updatedUser.skills,
+      teachingExperience: updatedUser.teachingExperience,
+      academicInstitution: updatedUser.academicInstitution,
+      currentCompany: updatedUser.currentCompany,
+      otherCompany: updatedUser.otherCompany,
+      previousCompanies: updatedUser.previousCompanies,
       role: updatedUser.role,
       mentorSpecialty: updatedUser.mentorSpecialty,
       profilePicture: updatedUser.profilePicture

@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import axios from 'axios';
 
+// Define colors to match the Overview page
 const colors = {
-  primary: '#333333',
-  secondary: '#00c785',
-  tertiary: '#FFFFFF',
+  primary: '#333333',   // Dark gray
+  secondary: '#00c785', // Bright blue for secondary
+  tertiary: '#FFFFFF',  // White for tertiary
 };
 
 const PageWrapper = styled.div`
-  background-image: url('assets/ai-background.png'); // Use a relevant background image
+  background-image: url('assets/ai-background.png'); // Replace with the actual path to your AI-themed image
   background-size: cover;
   background-position: center;
+  background-attachment: fixed;
   min-height: 100vh;
   color: ${colors.tertiary};
   padding: 2rem;
@@ -24,7 +27,7 @@ const PageWrapper = styled.div`
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6); // Dark overlay
+    background-color: rgba(0, 0, 0, 0.5); // Dark overlay for better text visibility
     z-index: 1;
   }
 `;
@@ -32,30 +35,87 @@ const PageWrapper = styled.div`
 const ContentWrapper = styled.div`
   position: relative;
   z-index: 2;
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
+`;
+
+
+const Logo = styled.div`
+  color: ${colors.secondary};
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+`;
+
+const Nav = styled.nav`
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+`;
+
+const NavLink = styled(Link)`
+  color: ${colors.tertiary};
+  text-decoration: none;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.3s, color 0.3s;
+  &:hover {
+    background-color: ${colors.secondary};
+    color: ${colors.primary};
+  }
 `;
 
 const Title = styled.h1`
   font-size: clamp(2rem, 5vw, 3rem);
+  margin-bottom: 1rem;
   text-align: center;
-  margin-bottom: 2rem;
   background: linear-gradient(to right, ${colors.secondary}, ${colors.tertiary});
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  color: transparent;
   text-shadow: none;
+`;
+
+const Subtitle = styled.p`
+  font-size: clamp(1rem, 3vw, 1.5rem);
+  margin-bottom: 2rem;
+  text-align: center;
+  color: ${colors.tertiary};
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+`;
+
+const TabContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+`;
+
+const TabButton = styled.button`
+  background-color: ${props => props.active ? colors.secondary : 'transparent'};
+  color: ${props => props.active ? colors.primary : colors.tertiary};
+  border: 2px solid ${colors.secondary};
+  padding: 0.5rem 1rem;
+  margin: 0 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, transform 0.2s;
+  &:hover {
+    background-color: ${colors.secondary};
+    color: ${colors.primary};
+    transform: translateY(-2px);
+  }
 `;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  margin-bottom: 20px;
-  background-color: rgba(255, 255, 255, 0.1);
+  gap: 1rem;
+  background-color: rgba(255, 255, 255, 0);
   backdrop-filter: blur(10px);
   padding: 2rem;
   border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 `;
 
@@ -68,21 +128,25 @@ const TextArea = styled.textarea`
   width: 100%;
   height: 150px;
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid ${colors.secondary};
   border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.1); 
+  color: ${colors.tertiary};
   font-family: 'Courier New', Courier, monospace;
 `;
 
 const Select = styled.select`
   padding: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid ${colors.secondary};
   border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: ${colors.tertiary};
 `;
 
 const Button = styled.button`
   padding: 10px 20px;
   background-color: ${colors.secondary};
-  color: ${colors.tertiary};
+  color: ${colors.primary};
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -109,7 +173,7 @@ const ResponseBox = styled.div`
 
 const ErrorMessage = styled.div`
   color: #dc3545;
-  background-color: #f8d7da;
+  background-color: rgba(248, 215, 218, 0.7);
   border: 1px solid #f5c6cb;
   padding: 10px;
   border-radius: 4px;
@@ -117,8 +181,8 @@ const ErrorMessage = styled.div`
 `;
 
 const LoadingSpinner = styled.div`
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
+  border: 4px solid ${colors.tertiary};
+  border-top: 4px solid ${colors.secondary};
   border-radius: 50%;
   width: 30px;
   height: 30px;
@@ -141,6 +205,11 @@ const AICodingMentor = () => {
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('codeAnalysis');
 
+  const languages = [
+    'JavaScript', 'Python', 'Java', 'C++', 'C#', 'Ruby', 'Go', 'Swift',
+    'Kotlin', 'TypeScript', 'PHP', 'Rust', 'Scala', 'Dart', 'R'
+  ];
+
   const handleRequest = async (endpoint, data) => {
     setLoading(true);
     setError('');
@@ -159,20 +228,21 @@ const AICodingMentor = () => {
     <PageWrapper>
       <ContentWrapper>
         <Title>AI Coding Mentor</Title>
+        <Subtitle>Your personal coding assistant powered by AI</Subtitle>
 
-        <div>
-          <Button onClick={() => setActiveTab('codeAnalysis')}>Code Analysis</Button>
-          <Button onClick={() => setActiveTab('generateExercise')}>Generate Exercise</Button>
-          <Button onClick={() => setActiveTab('answerQuestion')}>Ask Question</Button>
-        </div>
+        <TabContainer>
+          <TabButton active={activeTab === 'codeAnalysis'} onClick={() => setActiveTab('codeAnalysis')}>Code Analysis</TabButton>
+          <TabButton active={activeTab === 'generateExercise'} onClick={() => setActiveTab('generateExercise')}>Generate Exercise</TabButton>
+          <TabButton active={activeTab === 'answerQuestion'} onClick={() => setActiveTab('answerQuestion')}>Ask Question</TabButton>
+        </TabContainer>
 
         {activeTab === 'codeAnalysis' && (
           <Form onSubmit={(e) => { e.preventDefault(); handleRequest('code-analysis', { code, language }); }}>
             <Label>Language:</Label>
             <Select value={language} onChange={(e) => setLanguage(e.target.value)}>
-              <option value="javascript">JavaScript</option>
-              <option value="python">Python</option>
-              <option value="java">Java</option>
+              {languages.map((lang) => (
+                <option key={lang} value={lang.toLowerCase()}>{lang}</option>
+              ))}
             </Select>
             <Label>Code:</Label>
             <TextArea value={code} onChange={(e) => setCode(e.target.value)} placeholder="Enter your code here" />
@@ -184,9 +254,9 @@ const AICodingMentor = () => {
           <Form onSubmit={(e) => { e.preventDefault(); handleRequest('generate-exercise', { language, difficulty }); }}>
             <Label>Language:</Label>
             <Select value={language} onChange={(e) => setLanguage(e.target.value)}>
-              <option value="javascript">JavaScript</option>
-              <option value="python">Python</option>
-              <option value="java">Java</option>
+              {languages.map((lang) => (
+                <option key={lang} value={lang.toLowerCase()}>{lang}</option>
+              ))}
             </Select>
             <Label>Difficulty:</Label>
             <Select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>

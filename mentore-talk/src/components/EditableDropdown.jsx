@@ -41,7 +41,7 @@ const OptionsList = styled.ul`
   right: 0;
   max-height: 150px;
   overflow-y: auto;
-  background-color: ${colors.primary};
+  background-color: ${colors.primary}; /* Black background */
   border: 1px solid ${colors.secondary};
   border-radius: 4px;
   z-index: 1;
@@ -53,11 +53,11 @@ const OptionsList = styled.ul`
 const Option = styled.li`
   padding: 0.75rem;
   cursor: pointer;
-  color: ${colors.tertiary};
+  color: ${colors.primary}; /* White text */
 
   &:hover {
-    background-color: ${colors.secondary};
-    color: ${colors.primary};
+    background-color: ${colors.primary}; /* Highlight option */
+    color: ${colors.primary}; /* Black text on hover */
   }
 `;
 

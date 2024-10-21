@@ -37,9 +37,6 @@ const App = () => {
         <Route path="/Profile" element={<Profile />} />
         <Route path="/create-post" element={<CreatePost />} />
 
-        
-    
-  
 
 
         {/* Routes with sidebar */}

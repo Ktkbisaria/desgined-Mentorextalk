@@ -130,7 +130,7 @@ const Sidebar = () => {
             <FileText /> Resume Review
           </SidebarItem>
           <SidebarItem to="/ai-mentor">
-            <Book /> AI MENTORS
+            <Book /> AI MENTOR
           </SidebarItem>
         </SidebarContent>
       </SidebarContainer>

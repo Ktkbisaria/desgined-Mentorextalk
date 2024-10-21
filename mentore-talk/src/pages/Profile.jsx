@@ -203,13 +203,28 @@ const UserActivity = styled.div`
   color: ${colors.tertiary};
   font-size: 1.1rem;
 `;
+const SkillsList = styled.ul`
+  list-style-type: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+`;
+
+const SkillItem = styled.li`
+  background-color: ${colors.secondary};
+  color: ${colors.primary};
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+`;
 
 const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [activeTab, setActiveTab] = useState('Posts');
+  const [activeTab, setActiveTab] = useState('About');
   const [editedData, setEditedData] = useState({});
 
   useEffect(() => {
@@ -282,7 +297,7 @@ const Profile = () => {
     setActiveTab(tab);
   };
 
-  const renderExperience = (experience) => {
+const renderExperience = (experience) => {
     if (!experience) return "No experience data available";
     if (typeof experience === 'string') return experience;
     
@@ -290,8 +305,8 @@ const Profile = () => {
       <div>
         <p><strong>Company:</strong> {experience.company}</p>
         <p><strong>Job Title:</strong> {experience.jobTitle}</p>
-        <p><strong>Start Date:</strong> {experience.startDate}</p>
-        <p><strong>End Date:</strong> {experience.endDate || 'Present'}</p>
+        <p><strong>Start Date:</strong> {new Date(experience.startDate).toLocaleDateString()}</p>
+        <p><strong>End Date:</strong> {experience.endDate ? new Date(experience.endDate).toLocaleDateString() : 'Present'}</p>
         <p><strong>Responsibilities:</strong> {experience.responsibilities}</p>
       </div>
     );
@@ -308,6 +323,17 @@ const Profile = () => {
         <p><strong>Institution:</strong> {education.institution}</p>
         <p><strong>Graduation Year:</strong> {education.graduationYear}</p>
       </div>
+    );
+  };
+
+  const renderSkills = (skills) => {
+    if (!skills || skills.length === 0) return "No skills listed";
+    return (
+      <SkillsList>
+        {skills.map((skill, index) => (
+          <SkillItem key={index}>{skill}</SkillItem>
+        ))}
+      </SkillsList>
     );
   };
 
@@ -354,15 +380,36 @@ const Profile = () => {
       </ProfileHeader>
 
       <Tabs>
-        <Tab onClick={() => handleTabClick('Experiences')}>Experiences</Tab>
+        <Tab onClick={() => handleTabClick('About')}>About</Tab>
+        <Tab onClick={() => handleTabClick('Experience')}>Experience</Tab>
         <Tab onClick={() => handleTabClick('Education')}>Education</Tab>
-        <Tab onClick={() => handleTabClick('Achievements')}>Achievements</Tab>
+        <Tab onClick={() => handleTabClick('Skills')}>Skills</Tab>
+        <Tab onClick={() => handleTabClick('Mentor Info')}>Mentor Info</Tab>
         <Tab onClick={() => handleTabClick('Reviews')}>Reviews</Tab>
-        <Tab onClick={() => handleTabClick('Posts')}>Posts</Tab>
       </Tabs>
 
       <ProfileContent>
-        {activeTab === 'Experiences' && (
+        {activeTab === 'About' && (
+          <SectionCard>
+            <SectionHeader>About</SectionHeader>
+            <UserActivity>
+              {isEditing ? (
+                <>
+                  <TextArea
+                    name="bio"
+                    value={editedData.bio || ''}
+                    onChange={handleChange}
+                    placeholder="Tell us about yourself..."
+                  />
+                </>
+              ) : (
+                <p>{userData.bio || "No bio available"}</p>
+              )}
+            </UserActivity>
+          </SectionCard>
+        )}
+
+        {activeTab === 'Experience' && (
           <SectionCard>
             <SectionHeader>Experience</SectionHeader>
             <UserActivity>
@@ -444,35 +491,78 @@ const Profile = () => {
           </SectionCard>
         )}
 
-        {activeTab === 'Achievements' && (
+        {activeTab === 'Skills' && (
           <SectionCard>
-            <SectionHeader>Achievements</SectionHeader>
+            <SectionHeader>Skills</SectionHeader>
             <UserActivity>
-              {userData.achievements || "No achievements yet"}
+              {isEditing ? (
+                <TextArea
+                  name="skills"
+                  value={editedData.skills?.join(', ') || ''}
+                  onChange={(e) => setEditedData({...editedData, skills: e.target.value.split(', ')})}
+                  placeholder="Enter skills separated by commas"
+                />
+              ) : (
+                renderSkills(userData.skills)
+              )}
             </UserActivity>
           </SectionCard>
         )}
 
-         {activeTab === 'Reviews' && (
+        {activeTab === 'Mentor Info' && (
+          <SectionCard>
+            <SectionHeader>Mentor Information</SectionHeader>
+            <UserActivity>
+              {isEditing ? (
+                <>
+                  <Input
+                    name="teachingExperience"
+                    value={editedData.teachingExperience || ''}
+                    onChange={handleChange}
+                    placeholder="Teaching Experience"
+                  />
+                  {editedData.teachingExperience === 'Professor' && (
+                    <Input
+                      name="academicInstitution"
+                      value={editedData.academicInstitution || ''}
+                      onChange={handleChange}
+                      placeholder="Academic Institution"
+                    />
+                  )}
+                  <Input
+                    name="currentCompany"
+                    value={editedData.currentCompany || ''}
+                    onChange={handleChange}
+                    placeholder="Current Company"
+                  />
+                  <TextArea
+                    name="mentorSpecialty"
+                    value={editedData.mentorSpecialty?.join(', ') || ''}
+                    onChange={(e) => setEditedData({...editedData, mentorSpecialty: e.target.value.split(', ')})}
+                    placeholder="Enter mentor specialties separated by commas"
+                  />
+                </>
+              ) : (
+                <>
+                  <p><strong>Teaching Experience:</strong> {userData.teachingExperience || 'Not specified'}</p>
+                  {userData.teachingExperience === 'Professor' && (
+                    <p><strong>Academic Institution:</strong> {userData.academicInstitution || 'Not specified'}</p>
+                  )}
+                  <p><strong>Current Company:</strong> {userData.currentCompany || 'Not specified'}</p>
+                  <p><strong>Mentor Specialties:</strong> {userData.mentorSpecialty?.join(', ') || 'Not specified'}</p>
+                </>
+              )}
+            </UserActivity>
+          </SectionCard>
+        )}
+
+        {activeTab === 'Reviews' && (
           <SectionCard>
             <SectionHeader>Reviews</SectionHeader>
             <UserActivity>
-              {/* Render reviews */}
               {userData.reviews?.length > 0
                 ? userData.reviews.map((review, index) => <div key={index}>{review}</div>)
                 : "No reviews yet"}
-            </UserActivity>
-          </SectionCard>
-        )}
-
-        {activeTab === 'Posts' && (
-          <SectionCard>
-            <SectionHeader>Posts</SectionHeader>
-            <UserActivity>
-              {/* Render posts */}
-              {userData.posts?.length > 0
-                ? userData.posts.map((post, index) => <div key={index}>{post}</div>)
-                : "No posts yet"}
             </UserActivity>
           </SectionCard>
         )}
