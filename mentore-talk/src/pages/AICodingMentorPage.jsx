@@ -117,6 +117,7 @@ const Form = styled.form`
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  
 `;
 
 const Label = styled.label`
@@ -139,8 +140,8 @@ const Select = styled.select`
   padding: 10px;
   border: 1px solid ${colors.secondary};
   border-radius: 4px;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: ${colors.tertiary};
+  background-color: rgba(255, 0, 0, 0);
+  color: ${colors.primary};
 `;
 
 const Button = styled.button`
