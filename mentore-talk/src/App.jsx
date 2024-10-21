@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage';
 import DashboardLayout from './components/DashboardLayout';
 import Feed from './pages/Feed';
 import MentorsPage from './pages/MentorsPage';
+import MentorProfile from './pages/MentorProfile';
 import Profile from './pages/Profile';
 import MentorProfileCompletionPage from './pages/MentorProfileCompletionPage';
 import CreatePost from './pages/CreatePost';
@@ -36,6 +37,7 @@ const App = () => {
         <Route path="/mentor-profile-completion" element={<MentorProfileCompletionPage />} />
         <Route path="/Profile" element={<Profile />} />
         <Route path="/create-post" element={<CreatePost />} />
+        <Route path="/mentor/:mentorId" element={<MentorProfile />} />
 
 
 

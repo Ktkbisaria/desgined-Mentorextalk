@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
+import { Link } from 'react-router-dom';  // Import Link from react-router-dom
 
 const colors = {
   primary: '#1c1e21',
@@ -189,25 +190,27 @@ const MentorsPage = () => {
       <MentorGrid>
         {mentors.length > 0 ? (
           mentors.map((mentor) => (
-            <MentorCard key={mentor._id}>
-              <ProfilePicture 
-                src={mentor.profilePicture || '/default-profile.png'} 
-                alt={mentor.username}
-              />
-              <Username>{mentor.username}</Username>
-              <Experience>
-                {mentor.experience ? `${mentor.experience.jobTitle} at ${mentor.experience.company}` : 'No experience listed'}
-              </Experience>
-              <SkillsWrapper>
-                {mentor.skills && mentor.skills.length > 0 ? (
-                  mentor.skills.map((skill, index) => (
-                    <SkillTag key={index}>{skill}</SkillTag>
-                  ))
-                ) : (
-                  <SkillTag>No skills listed</SkillTag>
-                )}
-              </SkillsWrapper>
-            </MentorCard>
+            <Link to={`/mentor/${mentor._id}`} key={mentor._id} style={{ textDecoration: 'none' }}>
+              <MentorCard>
+                <ProfilePicture 
+                  src={mentor.profilePicture || '/default-profile.png'} 
+                  alt={mentor.username}
+                />
+                <Username>{mentor.username}</Username>
+                <Experience>
+                  {mentor.experience ? `${mentor.experience.jobTitle} at ${mentor.experience.company}` : 'No experience listed'}
+                </Experience>
+                <SkillsWrapper>
+                  {mentor.skills && mentor.skills.length > 0 ? (
+                    mentor.skills.map((skill, index) => (
+                      <SkillTag key={index}>{skill}</SkillTag>
+                    ))
+                  ) : (
+                    <SkillTag>No skills listed</SkillTag>
+                  )}
+                </SkillsWrapper>
+              </MentorCard>
+            </Link>
           ))
         ) : (
           <StatusMessage>No mentors found.</StatusMessage>

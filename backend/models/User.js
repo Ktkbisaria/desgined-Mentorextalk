@@ -39,10 +39,12 @@ const userSchema = new mongoose.Schema({
       date: { type: Date }
     }
   ],
-  
-  profilePicture: { type: String },
+
+  profilePicture: { type: String }, // URL to profile picture
   createdAt: { type: Date, default: Date.now }
 });
+
+
 
 userSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
