@@ -115,8 +115,8 @@ const Select = styled.select`
   padding: 0.5rem;
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 4px;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: ${colors.tertiary};
+  background-color: rgba(255, 255, 255, 255);
+  color: ${colors.primary};
   margin-bottom: 1rem;
 
   &:focus {
