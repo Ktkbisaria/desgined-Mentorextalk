@@ -15,6 +15,10 @@ const PageWrapper = styled.div`
   background-color: ${colors.primary};
   color: ${colors.tertiary};
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   padding: 2rem;
 `;
 
@@ -22,7 +26,7 @@ const ProfileHeader = styled.header`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 `;
 
 const ProfilePicture = styled.img`
@@ -43,7 +47,7 @@ const Bio = styled.p`
   color: ${colors.tertiary};
   text-align: center;
   max-width: 600px;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 `;
 
 const SkillsWrapper = styled.div`
@@ -63,9 +67,43 @@ const SkillTag = styled.span`
   font-weight: bold;
 `;
 
+const ConnectButton = styled.button`
+  background-color: ${colors.secondary};
+  color: ${colors.primary};
+  border: none;
+  border-radius: 20px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: ${colors.highlight};
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+`;
+
 const MentorProfile = () => {
   const { mentorId } = useParams();
   const [mentor, setMentor] = useState(null);
+  const [connectionStatus, setConnectionStatus] = useState('connect'); // Default button text
+
+  const sendConnectionRequest = async () => {
+    try {
+      const response = await axios.post('/api/connection/send', { mentorId }); // Backend API endpoint
+      if (response.data.status === 'success') {
+        setConnectionStatus('request sent');
+      } else {
+        console.error(response.data.message);
+      }
+    } catch (error) {
+      console.error('Error sending connection request:', error);
+    }
+  };
 
   useEffect(() => {
     const fetchMentorDetails = async () => {
@@ -84,6 +122,11 @@ const MentorProfile = () => {
     return <PageWrapper>Loading...</PageWrapper>;
   }
 
+  const handleConnect = () => {
+    // Placeholder for connect functionality
+    console.log(`Connect request sent to ${mentor.username}`);
+  };
+
   return (
     <PageWrapper>
       <ProfileHeader>
@@ -100,6 +143,13 @@ const MentorProfile = () => {
           <SkillTag>No skills listed</SkillTag>
         )}
       </SkillsWrapper>
+      <ConnectButton 
+      onClick={sendConnectionRequest} 
+      disabled={connectionStatus !== 'connect'} // Disable if not 'connect'
+      className={connectionStatus === 'request sent' ? 'btn-disabled' : 'btn-primary'}
+    >
+      {connectionStatus}
+    </ConnectButton>
     </PageWrapper>
   );
 };

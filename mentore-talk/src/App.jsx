@@ -13,6 +13,7 @@ import CreatePost from './pages/CreatePost';
 import ResumeReviewPage from './pages/ResumeReviewPage';
 import RoadmapsPage from './pages/RoadmapsPage';
 import AICodingMentorPage from './pages/AICodingMentorPage';
+import { SocketProvider } from './contexts/SocketContext';
 
 
 // In your Routes component, replace the placeholder RoadmapsPage with the new component
@@ -28,6 +29,7 @@ const ProblemsPage = () => <div>Problems Page</div>;
 
 const App = () => {
   return (
+    <SocketProvider>
     <Router>
       <Routes>
         {/* Public routes */}
@@ -55,6 +57,7 @@ const App = () => {
         </Route>
       </Routes>
     </Router>
+    </SocketProvider>
   );
 };
 

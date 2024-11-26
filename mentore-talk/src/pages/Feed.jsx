@@ -199,7 +199,6 @@ const Feed = () => {
             </PostHeader>
             <PostContent>{post.content}</PostContent>
             {post.image && <PostImage src={`http://localhost:5000${post.image}`} alt="Post image" />}
-
           </PostCard>
         ))}
       </PostList>

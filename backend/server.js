@@ -15,6 +15,8 @@ const mentorRoutes = require('./routes/mentorRoutes');
 const resumeRoutes = require('./routes/resumeRoutes');
 const errorHandler = require('./middlewares/errorHandler');
 const aiMentorRoutes = require('./routes/aiMentorRoutes');
+const connectionRoutes = require('./routes/connectionRoutes');
+
 // ...
 
 
@@ -54,6 +56,8 @@ const io = socketIo(server, {
 app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/api/connections', connectionRoutes);
+
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {

@@ -41,7 +41,21 @@ const userSchema = new mongoose.Schema({
   ],
 
   profilePicture: { type: String }, // URL to profile picture
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: Date.now },
+
+  
+  connections: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // Accepted connections
+  pendingRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], // Requests sent by others
+
+  notifications: [
+    {
+      message: { type: String },
+      type: { type: String, enum: ['connection_request', 'connection_accept'] },
+      sender: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      read: { type: Boolean, default: false },
+      createdAt: { type: Date, default: Date.now }
+    }
+  ],
 });
 
 

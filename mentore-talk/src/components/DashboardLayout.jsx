@@ -65,7 +65,6 @@ const Nav = styled.nav`
 `;
 
 // NavLink Style with Hover Effect
-// Updated NavLink Style with Hover Effect for the "Chat" button
 const NavLink = styled.a`
   color: ${colors.tertiary};
   text-decoration: none;
@@ -82,7 +81,6 @@ const NavLink = styled.a`
   }
 `;
 
-
 // Chat Pop-up Style
 const ChatPopup = styled.div`
   position: fixed;
@@ -98,7 +96,21 @@ const ChatPopup = styled.div`
   display: ${({ isVisible }) => (isVisible ? 'block' : 'none')};
 `;
 
-// Close Button for Chat
+// Notifications Popup Style
+const NotificationsPopup = styled.div`
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 20%; /* Smaller width than chat */
+  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 11;
+  padding: 1rem;
+  color: ${colors.tertiary};
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
+  display: ${({ isVisible }) => (isVisible ? 'block' : 'none')};
+`;
+
+// Close Button for Chat and Notif
 const CloseButton = styled.button`
   background-color: ${colors.secondary};
   color: ${colors.primary};
@@ -113,13 +125,25 @@ const CloseButton = styled.button`
   }
 `;
 
+// Notification Item Style
+const NotificationItem = styled.div`
+  padding: 0.5rem 0;
+  border-bottom: 1px solid ${colors.tertiary}; /* Divider line between notifications */
+`;
+
 const DashboardLayout = () => {
-  // State to manage chat window visibility
+  // State to manage chat and notification visibility
   const [isChatVisible, setIsChatVisible] = useState(false);
+  const [isNotifVisible, setIsNotifVisible] = useState(false);
 
   // Function to toggle chat window visibility
   const toggleChat = () => {
     setIsChatVisible(!isChatVisible);
+  };
+
+  // Function to toggle notification window visibility
+  const toggleNotif = () => {
+    setIsNotifVisible(!isNotifVisible);
   };
 
   return (
@@ -131,7 +155,8 @@ const DashboardLayout = () => {
           <Nav>
             <NavLink as={Link} to="/profile">Profile</NavLink>
             <NavLink as={Link} to="/settings">Settings</NavLink>
-            <NavLink as="button" onClick={toggleChat}>Chat</NavLink> {/* Chat Option */}
+            <NavLink as="button" onClick={toggleChat}>Chat</NavLink>
+            <NavLink as="button" onClick={toggleNotif}>Notif</NavLink> {/* Notif Option */}
           </Nav>
         </Header>
         <Outlet /> {/* This is where the child routes will be rendered */}
@@ -143,6 +168,17 @@ const DashboardLayout = () => {
         <h3>Chat Screen</h3>
         <p>This is your chat window. Here you can chat with your mentors or users!</p>
       </ChatPopup>
+
+      {/* Notifications Pop-up */}
+      <NotificationsPopup isVisible={isNotifVisible}>
+        <CloseButton onClick={toggleNotif}>Close Notifications</CloseButton>
+        <h3>Notifications</h3>
+        {/* Sample Notifications */}
+        <NotificationItem>New message from Mentor</NotificationItem>
+        <NotificationItem>Your session is scheduled for tomorrow</NotificationItem>
+        <NotificationItem>Payment confirmed</NotificationItem>
+        {/* Add more notifications here */}
+      </NotificationsPopup>
     </LayoutWrapper>
   );
 };
